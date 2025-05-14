@@ -1,103 +1,142 @@
-import Image from "next/image";
+import { Suspense } from 'react';
+import Navbar from '../components/Navbar';
+import Terminal from '../components/Terminal';
+import ProjectShowcase from '../components/ProjectShowcase';
+import Skills from '../components/Skills';
+import Dashboard from '../components/Dashboard';
+import ArchitectureDiagram from '../components/ArchitectureDiagram';
+import Testimonials from '@/components/Testimonials';
+import GitHubActivity from '@/components/GitHubActivity';
+import { getPinnedRepos, getRecentCommits, getContributions } from '@/lib/github';
+import Contact from '@/components/Contact';
+import KubernetesPlayground from '@/components/KubernetesPlayground';
+import ResumeBuilder from '@/components/ResumeBuilder';
+// import VoiceAssistant from '@/components/VoiceAssistant';
+import QABot from '@/components/QABot';
+// import GamifiedExperience from '@/components/GamifiedExperience';
+// import { GamificationProvider } from '@/contexts/GamificationContext';
 
-export default function Home() {
+// Import dummy data
+import projectsData from '../data/projects.json';
+
+export default async function Home() {
+  const [repos, commits, contributions] = await Promise.all([
+    getPinnedRepos(),
+    getRecentCommits(),
+    getContributions(),
+  ]);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    // <GamificationProvider>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        {/* <VoiceAssistant /> */}
+        <QABot />
+        {/* <GamifiedExperience /> */}
+        
+        {/* Hero Section */}
+        <section className="pt-32 pb-20 px-4 md:px-8 lg:px-16 min-h-screen flex flex-col justify-center">
+          <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold font-heading mb-6">
+                <span className="text-foreground">Hi, I&apos;m </span>
+                <span className="text-accent">Adarsh</span>
+              </h1>
+              <h2 className="text-2xl md:text-3xl font-heading mb-6 text-secondary">
+                Full Stack Developer & Designer
+              </h2>
+              <p className="text-lg mb-8 text-foreground/80 max-w-lg">
+                I build exceptional digital experiences with modern technologies.
+                Specializing in creating interactive, high-performance web applications.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <a 
+                  href="#projects" 
+                  className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-full font-medium transition-colors"
+                >
+                  View My Work
+                </a>
+                <a 
+                  href="#contact" 
+                  className="px-6 py-3 border border-secondary text-secondary hover:bg-secondary/10 rounded-full font-medium transition-colors"
+                >
+                  Contact Me
+                </a>
+              </div>
+            </div>
+            
+            <div className="flex justify-center">
+              <Terminal />
+            </div>
+          </div>
+        </section>
+        
+        {/* 3D Projects Showcase Section */}
+        <section id="projects" className="py-20 px-4 md:px-8 lg:px-16 bg-background/50">
+          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-12 text-center">
+            <span className="text-secondary">Interactive</span> Projects
+          </h2>
+          
+          <Suspense fallback={<div className="text-center">Loading projects...</div>}>
+            <ProjectShowcase projects={projectsData} />
+          </Suspense>
+          
+          <div className="mt-12 text-center">
+            <a 
+              href="#" 
+              className="px-6 py-3 border border-accent text-accent hover:bg-accent/10 rounded-full font-medium transition-colors"
+            >
+              View All Projects
+            </a>
+          </div>
+        </section>
+        
+        {/* Skills Section */}
+        <Skills />
+        
+        {/* Architecture Diagram Section */}
+        <section className="py-20 px-4 md:px-8 lg:px-16 bg-background/50">
+          <div className="container mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-12 text-center">
+              <span className="text-secondary">Microservices</span> Architecture
+            </h2>
+            <p className="text-center text-foreground/80 max-w-2xl mx-auto mb-12">
+              Interactive visualization of the microservices architecture I&apos;ve built and worked with.
+              Click on any service to learn more about its tech stack and implementation details.
+            </p>
+            <ArchitectureDiagram />
+          </div>
+        </section>
+        
+        {/* DevOps Dashboard Section */}
+        <Dashboard />
+        
+        {/* GitHub Activity Section */}
+        <GitHubActivity
+          initialRepos={repos}
+          initialCommits={commits}
+          initialContributions={contributions}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        
+        <Testimonials />
+        
+        <section className="py-20 px-4 md:px-8 lg:px-16 bg-background/50">
+          <div className="container mx-auto max-w-5xl">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-12 text-center">
+              <span className="text-secondary">Docker & Kubernetes</span> Playground
+            </h2>
+            <p className="text-center text-foreground/80 max-w-2xl mx-auto mb-12">
+              Interactive visualization of container orchestration and deployment workflows.
+              Explore how containers are managed and scaled in a Kubernetes environment.
+            </p>
+            <KubernetesPlayground />
+          </div>
+        </section>
+        
+        <ResumeBuilder />
+        
+        <Contact />
+      </div>
+    // </GamificationProvider>
   );
 }
