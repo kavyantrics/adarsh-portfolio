@@ -72,25 +72,25 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <article className="container mx-auto px-4 py-16">
+    <div className="min-h-screen bg-[#18181b] font-mono text-gray-300">
+      <article className="container mx-auto px-4 py-16 sm:py-20 md:py-24">
         <div className="max-w-3xl mx-auto">
-          <header className="mb-8">
-            <h1 className="text-4xl font-bold font-heading mb-4 text-foreground">
+          <header className="mb-10 md:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-100 mb-4 leading-tight">
               {post.title}
             </h1>
             
-            <div className="flex items-center gap-4 text-foreground/60">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
               <time dateTime={post.date}>
                 {format(new Date(post.date), 'MMMM d, yyyy')}
               </time>
-              
-              <div className="flex gap-2">
+              {post.tags.length > 0 && <span className="hidden sm:inline">•</span>}
+              <div className="flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <a
                     key={tag}
                     href={`/blog/tags/${tag}`}
-                    className="text-sm px-2 py-1 rounded-full bg-primary/10 text-secondary hover:bg-primary/20 transition-colors"
+                    className="px-2.5 py-1 rounded-md bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20 hover:border-accent/40 transition-all duration-200 text-xs font-medium"
                   >
                     {tag}
                   </a>
@@ -100,7 +100,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           {post.image && (
-            <div className="relative w-full h-[400px] mb-8 rounded-lg overflow-hidden">
+            <div className="relative w-full h-auto sm:h-[350px] md:h-[450px] mb-10 md:mb-12 rounded-lg overflow-hidden shadow-lg border border-accent/10">
               <img
                 src={post.image}
                 alt={post.title}
@@ -109,7 +109,14 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           )}
 
-          <div className="prose prose-lg dark:prose-invert max-w-none">
+          <div className="prose prose-lg dark:prose-invert max-w-none font-mono 
+                          prose-headings:text-accent prose-headings:font-semibold 
+                          prose-p:text-gray-300 prose-li:text-gray-300 
+                          prose-a:text-accent prose-a:no-underline hover:prose-a:underline 
+                          prose-strong:text-gray-200 
+                          prose-blockquote:border-accent prose-blockquote:bg-[#222225] prose-blockquote:text-gray-400 
+                          prose-code:bg-accent/10 prose-code:text-accent prose-code:p-1 prose-code:rounded-md prose-code:text-sm 
+                          prose-pre:bg-[#222225] prose-pre:border prose-pre:border-gray-700 prose-pre:rounded-lg prose-pre:shadow-sm">
             <MDXRemote source={post.content} />
           </div>
         </div>

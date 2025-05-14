@@ -48,21 +48,21 @@ export default async function BlogPage() {
   ).sort();
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-16">
+    <div className="min-h-screen bg-[#18181b] font-mono text-gray-300">
+      <div className="container mx-auto px-4 py-16 sm:py-20 md:py-24">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold font-heading mb-8 text-foreground">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-wider mb-12 md:mb-16 text-accent text-center">
             Blog
           </h1>
           
-          <div className="mb-12">
-            <h2 className="text-xl font-semibold mb-4 text-foreground">Tags</h2>
-            <div className="flex flex-wrap gap-2">
+          <div className="mb-12 md:mb-16">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-gray-100 text-center uppercase tracking-wide">Filter by Tag</h2>
+            <div className="flex flex-wrap gap-3 justify-center">
               {tags.map((tag) => (
                 <a
                   key={tag}
                   href={`/blog/tags/${tag}`}
-                  className="px-3 py-1 rounded-full bg-primary/10 text-secondary hover:bg-primary/20 transition-colors"
+                  className="px-4 py-2 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-[#18181b] hover:border-accent transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-neon-sm"
                 >
                   {tag}
                 </a>
@@ -70,7 +70,7 @@ export default async function BlogPage() {
             </div>
           </div>
           
-          <div className="grid gap-8">
+          <div className="grid gap-10 md:gap-12">
             {posts.map((post) => (
               <BlogCard
                 key={post.slug}

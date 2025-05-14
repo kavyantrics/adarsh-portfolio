@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { DownloadCloud } from 'lucide-react';
 
 const skills = [
   { name: 'React', level: 90 },
@@ -13,76 +14,85 @@ const skills = [
 
 export default function About() {
   return (
-    <section id="about" className="py-20 px-4 md:px-8 lg:px-16 bg-background/50">
+    <section id="about" className="py-20 px-4 md:px-8 lg:px-16 bg-[#18181b] font-mono">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
-            <span className="text-secondary">About</span> Me
+          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-6 text-accent">
+            About Me
           </h2>
-          <p className="text-foreground/80 max-w-2xl mx-auto">
+          <p className="text-gray-400 max-w-2xl mx-auto text-sm">
             A passionate full-stack developer with expertise in building modern web applications
             and microservices architecture. I love solving complex problems and creating
             intuitive user experiences.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            animate={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <h3 className="text-2xl font-bold mb-6">My Journey</h3>
-            <div className="space-y-6">
-              <div className="relative pl-8 border-l-2 border-secondary/20">
-                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-secondary" />
-                <h4 className="font-bold mb-2">Senior Developer</h4>
-                <p className="text-foreground/80">Leading development of enterprise applications</p>
-                <p className="text-sm text-foreground/60">2021 - Present</p>
-              </div>
-              <div className="relative pl-8 border-l-2 border-secondary/20">
-                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-secondary" />
-                <h4 className="font-bold mb-2">Full Stack Developer</h4>
-                <p className="text-foreground/80">Built and maintained multiple web applications</p>
-                <p className="text-sm text-foreground/60">2019 - 2021</p>
-              </div>
-              <div className="relative pl-8 border-l-2 border-secondary/20">
-                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-secondary" />
-                <h4 className="font-bold mb-2">Software Engineer</h4>
-                <p className="text-foreground/80">Started my journey in software development</p>
-                <p className="text-sm text-foreground/60">2017 - 2019</p>
-              </div>
+            <h3 className="text-2xl md:text-3xl font-semibold mb-10 text-gray-100 uppercase tracking-wide text-center lg:text-left">My Journey</h3>
+            <div className="space-y-8 relative">
+              <div className="absolute left-3.5 top-2 bottom-2 w-0.5 bg-accent/30 rounded-full hidden md:block"></div>
+              {[
+                {
+                  title: "Senior Developer",
+                  description: "Leading development of enterprise applications",
+                  date: "2021 - Present"
+                },
+                {
+                  title: "Full Stack Developer",
+                  description: "Built and maintained multiple web applications",
+                  date: "2019 - 2021"
+                },
+                {
+                  title: "Software Engineer",
+                  description: "Started my journey in software development",
+                  date: "2017 - 2019"
+                }
+              ].map((item, index) => (
+                <div key={index} className="relative pl-10 md:pl-12">
+                  <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-neon-sm">
+                    <div className="w-3 h-3 bg-[#18181b] rounded-full"></div>
+                  </div>
+                  <h4 className="font-semibold text-lg mb-1 text-accent">{item.title}</h4>
+                  <p className="text-gray-400 text-sm mb-1">{item.description}</p>
+                  <p className="text-xs text-gray-500">{item.date}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            animate={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h3 className="text-2xl font-bold mb-6">Skills</h3>
-            <div className="space-y-4">
+            <h3 className="text-2xl md:text-3xl font-semibold mb-10 text-gray-100 uppercase tracking-wide text-center lg:text-left">Skills</h3>
+            <div className="space-y-5">
               {skills.map((skill) => (
                 <div key={skill.name}>
-                  <div className="flex justify-between mb-1">
-                    <span className="font-medium">{skill.name}</span>
-                    <span className="text-foreground/60">{skill.level}%</span>
+                  <div className="flex justify-between mb-1.5">
+                    <span className="font-medium text-gray-300 text-sm">{skill.name}</span>
+                    <span className="text-accent font-semibold text-sm">{skill.level}%</span>
                   </div>
-                  <div className="h-2 bg-secondary/20 rounded-full overflow-hidden">
+                  <div className="h-3 bg-accent/20 rounded-full overflow-hidden shadow-inner">
                     <motion.div
                       initial={{ width: 0 }}
-                      whileInView={{ width: `${skill.level}%` }}
+                      animate={{ width: `${skill.level}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1, ease: 'easeOut' }}
-                      className="h-full bg-secondary"
+                      className="h-full bg-gradient-to-r from-accent to-green-400 rounded-full shadow-lg"
                     />
                   </div>
                 </div>
@@ -93,31 +103,18 @@ export default function About() {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-16 text-center"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-20 text-center"
         >
           <a
             href="/resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 border border-secondary text-secondary hover:bg-secondary/10 rounded-full font-medium transition-colors"
+            className="inline-flex items-center gap-2.5 px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-[#18181b] rounded-full font-semibold transition-colors text-base shadow-neon-sm hover:shadow-neon-md"
           >
-            Download Resume
-            <svg
-              className="w-4 h-4 ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
+            <DownloadCloud size={18} /> Download Resume
           </a>
         </motion.div>
       </div>

@@ -2,56 +2,58 @@
 
 import { motion } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
+import Terminal from './Terminal'; // Import Terminal
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 md:px-8 lg:px-16">
+    <section className="min-h-screen flex flex-col justify-center bg-[#18181b] text-gray-100 px-6 sm:px-8 py-20 md:py-24 border-b border-accent/20 font-mono">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-1" // Adjusted for 2-col layout
           >
-            <h1 className="text-4xl md:text-6xl font-bold font-heading mb-6">
-              <span className="text-foreground">Hi, I&apos;m </span>
-              <span className="text-accent">Adarsh</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+              <span className="text-gray-100">Hi, I&apos;m </span>
+              <span className="text-accent animate-pulse">Adarsh Kumar</span>
             </h1>
-            <h2 className="text-2xl md:text-3xl font-heading mb-6 text-secondary">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8 text-gray-300">
               <TypeAnimation
                 sequence={[
-                  'Full Stack Developer',
-                  1000,
-                  'UI/UX Designer',
-                  1000,
-                  'DevOps Engineer',
-                  1000,
-                  'Open Source Contributor',
-                  1000,
+                  'Full Stack & DevOps Engineer',
+                  2000,
+                  'Cloud Solutions Architect',
+                  2000,
+                  'JavaScript Enthusiast',
+                  2000,
+                  'Tech Innovator & Problem Solver',
+                  2000,
                 ]}
                 wrapper="span"
-                speed={50}
+                speed={45}
+                className="text-accent/90" // Original TypeAnimation had this, seems good
                 repeat={Infinity}
               />
             </h2>
-            <p className="text-lg mb-8 text-foreground/80 max-w-lg">
-              I build exceptional digital experiences with modern technologies.
-              Specializing in creating interactive, high-performance web applications.
+            <p className="text-base sm:text-lg mb-10 text-gray-400 max-w-xl leading-relaxed">
+              A seasoned Full Stack & DevOps Engineer with 3+ years, crafting high-performance software and resilient infrastructure. I&apos;ve reduced deployment times by <span className="text-accent font-semibold">60%</span>, achieved <span className="text-accent font-semibold">99.99%</span> system uptime, and spearheaded scalable feature rollouts for <span className="text-accent font-semibold">25,000+</span> users. My toolkit includes React.js, Node.js, Python, AWS, Docker, Kubernetes, and full CI/CD automation.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4">
               <motion.a
                 href="#projects"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-full font-medium transition-colors"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="border-2 border-accent text-accent px-8 py-3 font-semibold uppercase tracking-wider rounded-md transition-all duration-300 hover:bg-accent hover:text-[#18181b] focus:outline-none focus:ring-4 focus:ring-accent/50 shadow-md hover:shadow-neon-sm"
               >
                 View My Work
               </motion.a>
               <motion.a
                 href="#contact"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 border border-secondary text-secondary hover:bg-secondary/10 rounded-full font-medium transition-colors"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="border-2 border-accent text-accent px-8 py-3 font-semibold uppercase tracking-wider rounded-md transition-all duration-300 hover:bg-accent hover:text-[#18181b] focus:outline-none focus:ring-4 focus:ring-accent/50 shadow-md hover:shadow-neon-sm"
               >
                 Contact Me
               </motion.a>
@@ -59,20 +61,17 @@ export default function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 100 }}
+            className="lg:col-span-1 hidden lg:flex justify-center items-center p-4" // Adjusted for 2-col layout
           >
-            <div className="relative w-full aspect-square max-w-lg mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse" />
-              </div>
+            <div className="w-full max-w-lg xl:max-w-xl"> {/* Container for Terminal */}
+              <Terminal />
             </div>
           </motion.div>
         </div>
       </div>
     </section>
   );
-} 
+}

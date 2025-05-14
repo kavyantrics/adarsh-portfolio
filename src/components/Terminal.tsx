@@ -71,9 +71,10 @@ I love building exceptional digital experiences and solving complex problems.`,
     Type 'ls' to see more projects`,
     contact: `Get in touch:
     Email: adarshh.addi@gmail.com
-    GitHub: github.com/adarsh
-    LinkedIn: linkedin.com/in/adarsh
-    Twitter: @adarsh`,
+    Phone: +91 9322265817
+    GitHub: github.com/kavyantrics
+    LinkedIn: linkedin.com/in/kavyantrics
+    Twitter: @kavyantrics`,
     'sudo hire-me': `[sudo] password for visitor: 
     
     Initiating hiring process...
@@ -81,7 +82,7 @@ I love building exceptional digital experiences and solving complex problems.`,
     
     Congratulations! You've successfully initiated the hiring process! 🎉
     
-    Please send your offer to: adarsh@example.com
+    Please send your offer to: adarshh.addi@gmail.com
     
     Expected response time: 24 hours
     Status: Ready to join your team!`,
@@ -170,21 +171,21 @@ I love building exceptional digital experiences and solving complex problems.`,
 
   return (
     <motion.div 
-      className="bg-background border border-primary/30 rounded-lg overflow-hidden shadow-lg w-full max-w-2xl"
+      className="bg-[#18181b] border border-accent rounded-lg overflow-hidden shadow-neon w-full max-w-2xl font-mono"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <div className="bg-primary/20 p-2 flex items-center space-x-1.5">
-        <div className="w-3 h-3 rounded-full bg-accent"></div>
-        <div className="w-3 h-3 rounded-full bg-secondary"></div>
-        <div className="w-3 h-3 rounded-full bg-primary"></div>
-        <div className="ml-2 text-xs font-code text-foreground/70">visitor@adarsh-portfolio:~</div>
+      <div className="bg-black p-2 flex items-center space-x-1.5 border-b border-[#222]">
+        <div className="w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_6px_#00ffae99]"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_6px_#a259ff99]"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-[0_0_6px_#0ea5e999]"></div>
+        <div className="ml-3 text-xs font-mono text-gray-400 tracking-widest select-none">visitor@adarsh-portfolio:~</div>
       </div>
       
       <div 
         ref={terminalRef}
-        className="p-4 h-80 overflow-y-auto font-code text-sm"
+        className="p-4 h-80 overflow-y-auto font-mono text-sm text-[#e0e0e0] bg-transparent"
       >
         <AnimatePresence>
           {commands.map((cmd, index) => (
@@ -197,17 +198,17 @@ I love building exceptional digital experiences and solving complex problems.`,
             >
               {cmd.input && (
                 <div className="flex">
-                  <span className="text-secondary">visitor@adarsh-portfolio:~$</span>
-                  <span className="ml-2 text-foreground">{cmd.input}</span>
+                  <span className="text-accent font-bold">visitor@adarsh-portfolio:~$</span>
+                  <span className="ml-2 text-yellow-400">{cmd.input}</span>
                 </div>
               )}
-              <div className="mt-1 text-foreground/80 whitespace-pre-line">{cmd.output}</div>
+              <div className="mt-1 text-sky-300 whitespace-pre-line">{cmd.output}</div>
             </motion.div>
           ))}
         </AnimatePresence>
         
         <div className="flex mt-2">
-          <span className="text-secondary">visitor@adarsh-portfolio:~$</span>
+          <span className="text-accent font-bold">visitor@adarsh-portfolio:~$</span>
           <div className="ml-2 flex-1 flex items-center">
             <input
               ref={inputRef}
@@ -215,13 +216,13 @@ I love building exceptional digital experiences and solving complex problems.`,
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}
               onKeyDown={handleCommand}
-              className="bg-transparent border-none outline-none text-foreground w-full font-code"
+              className="bg-transparent border-none outline-none text-yellow-400 w-full font-mono tracking-wide"
               autoFocus
               disabled={isTyping}
             />
             <motion.div
-              className="w-2 h-4 bg-accent ml-1"
-              animate={{ opacity: [1, 0] }}
+              className="w-2 h-5 bg-accent ml-1 rounded shadow-[0_0_8px_#00ffae]"
+              animate={{ opacity: [1, 0.2] }}
               transition={{ duration: 0.8, repeat: Infinity }}
             />
           </div>

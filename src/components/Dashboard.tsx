@@ -8,6 +8,7 @@ import {
   SystemMetrics,
   LogEntry,
 } from '@/data/dashboard';
+import { RefreshCw, CheckCircle, XCircle, AlertTriangle, Server, Cpu, MemoryStick, HardDrive } from 'lucide-react';
 
 interface DashboardData {
   deployments: DeploymentStatus[];
@@ -41,18 +42,67 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const getStatusStyles = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'success':
+      case 'healthy':
+        return {
+          bg: 'bg-accent/10',
+          text: 'text-accent',
+          icon: <CheckCircle size={16} className="mr-1.5" />,
+          ring: 'ring-accent/30',
+        };
+      case 'failed':
+        return {
+          bg: 'bg-red-500/10',
+          text: 'text-red-400',
+          icon: <XCircle size={16} className="mr-1.5" />,
+          ring: 'ring-red-500/30',
+        };
+      case 'pending':
+      case 'warning':
+        return {
+          bg: 'bg-yellow-500/10',
+          text: 'text-yellow-400',
+          icon: <AlertTriangle size={16} className="mr-1.5" />,
+          ring: 'ring-yellow-500/30',
+        };
+      default:
+        return {
+          bg: 'bg-gray-700/20',
+          text: 'text-gray-400',
+          icon: <Server size={16} className="mr-1.5" />,
+          ring: 'ring-gray-700/30',
+        };
+    }
+  };
+
+  const getLogLevelStyles = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'error':
+        return 'bg-red-500/10 text-red-400 border-l-2 border-red-500';
+      case 'warning':
+        return 'bg-yellow-500/10 text-yellow-400 border-l-2 border-yellow-500';
+      default: // info, debug, etc.
+        return 'bg-gray-700/20 text-gray-400 border-l-2 border-gray-500';
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+      <div className="flex items-center justify-center min-h-[400px] bg-[#18181b] font-mono">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-500 p-4">
-        Error: {error}
+      <div className="text-center text-red-400 p-4 bg-[#18181b] font-mono min-h-[400px] flex items-center justify-center">
+        <div className="bg-[#27272a] p-6 rounded-lg border border-red-500/50 shadow-neon-red">
+          <AlertTriangle size={24} className="text-red-400 mx-auto mb-3" />
+          Error: {error}
+        </div>
       </div>
     );
   }
@@ -60,174 +110,149 @@ const Dashboard = () => {
   if (!data) return null;
 
   return (
-    <section className="py-16 px-4 md:px-8 bg-gray-50 dark:bg-gray-900">
+    <section className="py-20 px-4 md:px-8 bg-[#18181b] font-mono">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex justify-between items-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider text-accent">
             DevOps Dashboard
           </h2>
           <button
             onClick={fetchData}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 border border-accent text-accent rounded-lg hover:bg-accent hover:text-[#18181b] transition-all duration-300 text-sm font-medium shadow-sm hover:shadow-neon-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
           >
+            <RefreshCw size={16} />
             Refresh
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Deployment Status */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <div className="bg-[#27272a] p-6 rounded-xl shadow-neon border border-accent/30">
+            <h3 className="text-xl font-semibold mb-6 text-gray-100">
               Recent Deployments
             </h3>
             <div className="space-y-4">
               <AnimatePresence>
-                {data.deployments.map((deployment) => (
-                  <motion.div
-                    key={deployment.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="p-4 border rounded-lg"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium text-gray-900 dark:text-white">
-                        {deployment.project}
-                      </span>
-                      <span
-                        className={`px-2 py-1 rounded text-sm ${
-                          deployment.status === 'success'
-                            ? 'bg-green-100 text-green-800'
-                            : deployment.status === 'failed'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {deployment.status}
-                      </span>
-                    </div>
-                    <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                      <p>Branch: {deployment.branch}</p>
-                      <p>Commit: {deployment.commit}</p>
-                      <p>Duration: {deployment.duration}s</p>
-                    </div>
-                  </motion.div>
-                ))}
+                {data.deployments.map((deployment) => {
+                  const statusStyle = getStatusStyles(deployment.status);
+                  return (
+                    <motion.div
+                      key={deployment.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className={`p-4 border ${statusStyle.ring} rounded-lg bg-gradient-to-br from-[#2c2c30] to-[#27272a]/80 ring-1 ring-inset ring-white/10`}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-gray-200">
+                          {deployment.project}
+                        </span>
+                        <span
+                          className={`flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}
+                        >
+                          {statusStyle.icon}
+                          {deployment.status.charAt(0).toUpperCase() + deployment.status.slice(1)}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-400 space-y-1">
+                        <p>Branch: <span className="text-gray-300">{deployment.branch}</span></p>
+                        <p>Commit: <span className="text-gray-300 truncate">{deployment.commit.substring(0,7)}...</span></p>
+                        <p>Duration: <span className="text-gray-300">{deployment.duration}s</span></p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </div>
           </div>
 
           {/* Project Health */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <div className="bg-[#27272a] p-6 rounded-xl shadow-neon border border-accent/30">
+            <h3 className="text-xl font-semibold mb-6 text-gray-100">
               Project Health
             </h3>
-            <div className="space-y-4">
-              {data.projectHealth.map((project) => (
-                <div key={project.name} className="p-4 border rounded-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {project.name}
-                    </span>
-                    <span
-                      className={`px-2 py-1 rounded text-sm ${
-                        project.status === 'healthy'
-                          ? 'bg-green-100 text-green-800'
-                          : project.status === 'warning'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {project.status}
+            <div className="space-y-5">
+              {data.projectHealth.map((project) => {
+                const statusStyle = getStatusStyles(project.status);
+                return (
+                  <div key={project.name} className={`p-4 border ${statusStyle.ring} rounded-lg bg-gradient-to-br from-[#2c2c30] to-[#27272a]/80 ring-1 ring-inset ring-white/10`}>
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="font-medium text-gray-200">
+                        {project.name}
+                      </span>
+                      <span
+                        className={`flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}
+                      >
+                         {statusStyle.icon}
+                        {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                      </span>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-400">Uptime</span>
+                          <span className="text-gray-200">
+                            {project.uptime.toFixed(2)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-1.5">
+                          <div
+                            className="bg-accent h-1.5 rounded-full"
+                            style={{ width: `${project.uptime}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-400">Response Time</span>
+                          <span className="text-gray-200">
+                            {project.responseTime}ms
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* System Metrics */}
+          <div className="bg-[#27272a] p-6 rounded-xl shadow-neon border border-accent/30">
+            <h3 className="text-xl font-semibold mb-6 text-gray-100">
+              System Metrics
+            </h3>
+            <div className="space-y-5">
+              {[
+                { Icon: Cpu, label: 'CPU Usage', value: data.systemMetrics.cpu, color: 'bg-accent' },
+                { Icon: MemoryStick, label: 'Memory Usage', value: data.systemMetrics.memory, color: 'bg-sky-400' },
+                { Icon: HardDrive, label: 'Disk Usage', value: data.systemMetrics.disk, color: 'bg-pink-500' },
+              ].map(({ Icon, label, value, color }) => (
+                <div key={label}>
+                  <div className="flex justify-between items-center text-sm mb-1.5">
+                    <span className="text-gray-300 flex items-center"><Icon size={14} className="mr-2 text-accent/80"/>{label}</span>
+                    <span className="text-gray-200 font-medium">
+                      {value.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="mt-2 space-y-2">
-                    <div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">Uptime</span>
-                        <span className="text-gray-900 dark:text-white">
-                          {project.uptime.toFixed(2)}%
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-green-600 h-2 rounded-full"
-                          style={{ width: `${project.uptime}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">Response Time</span>
-                        <span className="text-gray-900 dark:text-white">
-                          {project.responseTime}ms
-                        </span>
-                      </div>
-                    </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div
+                      className={`${color} h-2 rounded-full shadow-md`}
+                      style={{ width: `${value}%` }}
+                    ></div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* System Metrics */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-              System Metrics
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600 dark:text-gray-400">CPU Usage</span>
-                  <span className="text-gray-900 dark:text-white">
-                    {data.systemMetrics.cpu.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{ width: `${data.systemMetrics.cpu}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600 dark:text-gray-400">Memory Usage</span>
-                  <span className="text-gray-900 dark:text-white">
-                    {data.systemMetrics.memory.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-purple-600 h-2 rounded-full"
-                    style={{ width: `${data.systemMetrics.memory}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600 dark:text-gray-400">Disk Usage</span>
-                  <span className="text-gray-900 dark:text-white">
-                    {data.systemMetrics.disk.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-yellow-600 h-2 rounded-full"
-                    style={{ width: `${data.systemMetrics.disk}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Logs Section */}
-        <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+        <div className="mt-10 bg-[#27272a] p-6 rounded-xl shadow-neon-lg border border-accent/50">
+          <h3 className="text-xl font-semibold mb-6 text-gray-100">
             Recent Logs
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-2.5 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-accent/70 scrollbar-track-transparent">
             <AnimatePresence>
               {data.logs.map((log) => (
                 <motion.div
@@ -235,21 +260,15 @@ const Dashboard = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className={`p-3 rounded-lg text-sm ${
-                    log.level === 'error'
-                      ? 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                      : log.level === 'warning'
-                      ? 'bg-yellow-50 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                      : 'bg-gray-50 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
-                  }`}
+                  className={`p-3.5 rounded-md text-xs ${getLogLevelStyles(log.level)}`}
                 >
-                  <div className="flex justify-between items-start">
-                    <span className="font-medium">{log.source}</span>
-                    <span className="text-xs">
-                      {new Date(log.timestamp).toLocaleTimeString()}
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="font-medium">{log.source} [{log.level.toUpperCase()}]</span>
+                    <span className="text-gray-500">
+                      {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </span>
                   </div>
-                  <p className="mt-1">{log.message}</p>
+                  <p className="whitespace-pre-wrap break-words">{log.message}</p>
                 </motion.div>
               ))}
             </AnimatePresence>

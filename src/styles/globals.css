@@ -1,0 +1,23 @@
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/700.css';
+
+html, body {
+  @apply bg-background text-white font-mono;
+  min-height: 100vh;
+  font-family: 'JetBrains Mono', 'Space Mono', 'IBM Plex Mono', monospace;
+  background: #0a0a0a;
+  color: #e0e0e0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #18181b;
+}
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 4px;
+} 

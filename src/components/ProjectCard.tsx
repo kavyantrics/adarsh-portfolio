@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { Github, ExternalLink } from 'lucide-react';
 
 type ProjectCardProps = {
   title: string;
@@ -15,47 +16,47 @@ type ProjectCardProps = {
 const ProjectCard = ({ title, description, tags, imageUrl, demoUrl, githubUrl }: ProjectCardProps) => {
   return (
     <motion.div 
-      className="bg-background border border-primary/20 rounded-lg overflow-hidden shadow-lg"
-      whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
+      className="group bg-[#27272a] border border-accent rounded-lg overflow-hidden shadow-neon flex flex-col h-full font-mono"
+      whileHover={{ y: -8, scale: 1.03 }}
       initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
       viewport={{ once: true }}
     >
-      <div className="relative h-48 w-full">
+      <div className="relative h-52 w-full overflow-hidden">
         <Image 
           src={imageUrl} 
           alt={title}
           fill
-          style={{ objectFit: 'cover' }}
-          className="transition-transform duration-500 ease-in-out group-hover:scale-105"
+          className="object-cover w-full h-full transition-transform duration-300 ease-in-out group-hover:scale-105"
         />
+        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-300"></div>
       </div>
       
-      <div className="p-6">
-        <h3 className="text-xl font-bold font-heading mb-2 text-foreground">{title}</h3>
-        <p className="text-foreground/70 mb-4">{description}</p>
+      <div className="p-6 flex flex-col flex-grow">
+        <h3 className="text-xl font-semibold mb-3 text-gray-100 group-hover:text-accent transition-colors">{title}</h3>
+        <p className="text-gray-400 text-sm mb-4 flex-grow">{description}</p>
         
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-6">
           {tags.map((tag) => (
             <span 
               key={tag} 
-              className="text-xs px-2 py-1 rounded-full bg-primary/10 text-secondary"
+              className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full font-medium"
             >
               {tag}
             </span>
           ))}
         </div>
         
-        <div className="flex space-x-3">
+        <div className="flex gap-4 mt-auto">
           {githubUrl && (
             <a 
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-foreground hover:text-accent transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-accent text-accent rounded-md hover:bg-accent hover:text-[#18181b] transition-colors font-semibold"
             >
-              GitHub
+              <Github size={16} /> GitHub
             </a>
           )}
           {demoUrl && (
@@ -63,9 +64,9 @@ const ProjectCard = ({ title, description, tags, imageUrl, demoUrl, githubUrl }:
               href={demoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-foreground hover:text-accent transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-accent text-accent rounded-md hover:bg-accent hover:text-[#18181b] transition-colors font-semibold"
             >
-              Live Demo
+              <ExternalLink size={16} /> Live Demo
             </a>
           )}
         </div>

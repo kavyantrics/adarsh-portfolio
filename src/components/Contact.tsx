@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Send, Mail, MapPin, Github, Linkedin } from 'lucide-react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -42,25 +43,25 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 px-4 md:px-8 lg:px-16 bg-background/50">
+    <section id="contact" className="py-20 px-4 md:px-8 lg:px-16 bg-[#18181b] font-mono">
       <div className="container mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-center">
-            <span className="text-secondary">Get in</span> Touch
+          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-6 text-center text-accent">
+            Get in Touch
           </h2>
-          <p className="text-center text-foreground/80 mb-12">
-            Have a project in mind? Let&apos;s discuss how we can work together.
+          <p className="text-center text-gray-400 mb-16 text-sm">
+            Have a project in mind or just want to say hi? Let&apos;s discuss how we can work together.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8 bg-[#27272a] p-8 md:p-10 rounded-lg border border-accent/30 shadow-neon">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-300">
                   Name
                 </label>
                 <input
@@ -70,13 +71,13 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 rounded-lg border border-secondary/20 bg-background focus:outline-none focus:ring-2 focus:ring-secondary/50"
-                  placeholder="Your name"
+                  className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono"
+                  placeholder="Your Name"
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -85,14 +86,14 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 rounded-lg border border-secondary/20 bg-background focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                  className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono"
                   placeholder="your.email@example.com"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="message" className="block text-sm font-medium mb-2">
+              <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-300">
                 Message
               </label>
               <textarea
@@ -101,82 +102,89 @@ export default function Contact() {
                 value={formData.message}
                 onChange={handleChange}
                 required
-                rows={6}
-                className="w-full px-4 py-2 rounded-lg border border-secondary/20 bg-background focus:outline-none focus:ring-2 focus:ring-secondary/50"
-                placeholder="Your message..."
+                rows={5}
+                className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono resize-none"
+                placeholder="How can I help you today?"
               />
             </div>
 
-            <div className="flex justify-center">
-              <button
+            <div className="flex justify-center pt-2">
+              <motion.button
                 type="submit"
-                disabled={status === 'loading'}
-                className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                  status === 'loading'
-                    ? 'bg-secondary/50 cursor-not-allowed'
-                    : 'bg-secondary hover:bg-secondary/90 text-white'
+                disabled={status === 'loading' || status === 'success'}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className={`inline-flex items-center justify-center gap-2.5 px-10 py-3 rounded-full font-semibold transition-all duration-200 text-base border-2 
+                  ${status === 'loading' || status === 'success'
+                    ? 'bg-accent/60 text-white/70 border-white/50 cursor-not-allowed'
+                    : 'bg-accent text-white border-white hover:bg-accent/90 hover:shadow-neon-md shadow-neon-sm'
                 }`}
               >
-                {status === 'loading' ? 'Sending...' : 'Send Message'}
-              </button>
+                <Send size={18} />
+                {status === 'loading' ? 'Sending...' : status === 'success' ? 'Message Sent!' : 'Send Message'}
+              </motion.button>
             </div>
 
             {status === 'success' && (
               <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center text-green-500"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center text-green-400 pt-2"
               >
-                Message sent successfully! I&apos;ll get back to you soon.
+                Thank you! Your message has been sent successfully. I&apos;ll get back to you soon.
               </motion.p>
             )}
 
             {status === 'error' && (
               <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center text-red-500"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center text-red-400 pt-2"
               >
-                Something went wrong. Please try again later.
+                Oops! Something went wrong. Please try again later or contact me directly.
               </motion.p>
             )}
           </form>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-              <h3 className="font-medium mb-2">Email</h3>
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+            <motion.div initial={{ opacity:0, y:10}} animate={{opacity:1, y:0}} transition={{delay:0.1}} className="p-6 bg-[#27272a] rounded-lg border border-accent/30 shadow-neon-sm">
+              <Mail size={28} className="mx-auto mb-4 text-accent" />
+              <h3 className="font-semibold text-lg mb-1 text-gray-100">Email</h3>
               <a
                 href="mailto:adarshh.addi@gmail.com"
-                className="text-secondary hover:text-secondary/80"
+                className="text-accent hover:text-accent/80 transition-colors text-sm"
               >
                 adarshh.addi@gmail.com
               </a>
-            </div>
-            <div>
-              <h3 className="font-medium mb-2">Location</h3>
-              <p className="text-foreground/80">Remote / Worldwide</p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-2">Social</h3>
-              <div className="flex justify-center space-x-4">
+            </motion.div>
+            <motion.div initial={{ opacity:0, y:10}} animate={{opacity:1, y:0}} transition={{delay:0.2}} className="p-6 bg-[#27272a] rounded-lg border border-accent/30 shadow-neon-sm">
+              <MapPin size={28} className="mx-auto mb-4 text-accent" />
+              <h3 className="font-semibold text-lg mb-1 text-gray-100">Location</h3>
+              <p className="text-gray-400 text-sm">Pune, India / Remote</p>
+            </motion.div>
+            <motion.div initial={{ opacity:0, y:10}} animate={{opacity:1, y:0}} transition={{delay:0.3}} className="p-6 bg-[#27272a] rounded-lg border border-accent/30 shadow-neon-sm">
+              <h3 className="font-semibold text-lg mb-3 text-gray-100">Connect</h3>
+              <div className="flex justify-center space-x-6">
                 <a
                   href="https://github.com/kavyantrics"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-secondary hover:text-secondary/80"
+                  className="text-gray-400 hover:text-accent transition-colors"
+                  aria-label="GitHub Profile"
                 >
-                  GitHub
+                  <Github size={24} />
                 </a>
                 <a
                   href="https://linkedin.com/in/kavyantrics"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-secondary hover:text-secondary/80"
+                  className="text-gray-400 hover:text-accent transition-colors"
+                  aria-label="LinkedIn Profile"
                 >
-                  LinkedIn
+                  <Linkedin size={24} />
                 </a>
               </div>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>

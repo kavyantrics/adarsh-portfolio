@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body 
-        className="antialiased"
+        className="antialiased font-mono bg-[#18181b] text-gray-300"
         suppressHydrationWarning={true}
       >
         <ThemeProvider

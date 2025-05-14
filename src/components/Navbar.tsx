@@ -23,30 +23,30 @@ const Navbar = () => {
   ];
 
   return (
-    <motion.header 
-      className="fixed w-full z-50 py-4 bg-background border-b border-border/20 shadow-sm"
+    <motion.header
+      className="fixed w-full z-50 py-3 bg-black border-b border-[#222] shadow-sm font-mono"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <motion.div 
-          className="text-2xl font-bold font-heading text-accent"
+        <motion.div
+          className="text-2xl font-bold font-mono text-accent tracking-widest uppercase"
           whileHover={{ scale: 1.05 }}
         >
           <Link href="/">Adarsh</Link>
         </motion.div>
-        
-        <nav className="hidden md:flex items-center space-x-8">
+
+        <nav className="hidden md:flex items-center space-x-10">
           {navItems.map((item) => (
-            <motion.div 
+            <motion.div
               key={item.name}
-              whileHover={{ scale: 1.1, color: 'var(--accent)' }}
+              whileHover={{ scale: 1.1 }}
               className="relative"
             >
-              <Link 
+              <Link
                 href={item.path}
-                className="font-medium hover:text-accent transition-colors"
+                className="font-mono text-sm tracking-widest uppercase px-2 py-1 transition-colors duration-200 border-b-2 border-transparent hover:border-accent hover:text-accent focus:text-accent focus:border-accent"
               >
                 {item.name}
               </Link>
@@ -57,7 +57,7 @@ const Navbar = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+              className="p-2 rounded-full border border-[#222] text-accent hover:border-accent transition-colors bg-black ml-4"
               aria-label="Toggle theme"
             >
               <motion.div
@@ -111,9 +111,9 @@ const Navbar = () => {
             </motion.button>
           )}
         </nav>
-        
-        <motion.button 
-          className="md:hidden text-foreground"
+
+        <motion.button
+          className="md:hidden text-accent border border-[#222] p-2 rounded focus:outline-none focus:border-accent"
           whileTap={{ scale: 0.9 }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,57 +1,55 @@
-'use client';
+'use client'
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import ProjectCard3D from './ProjectCard3D'
+import { Github } from 'lucide-react'
 
-interface Project {
-  title: string;
-  description: string;
-  image: string;
-  tags: string[];
-  github: string;
-  demo: string;
+type Project = {
+  id: number
+  title: string
+  description: string
+  tags: string[]
+  imageUrl: string
+  demoUrl?: string
+  githubUrl?: string
+  modelPath?: string
 }
 
-const projects: Project[] = [
-  {
-    title: 'E-Commerce Platform',
-    description: 'A full-stack e-commerce platform built with Next.js, TypeScript, and Stripe integration.',
-    image: '/projects/ecommerce.jpg',
-    tags: ['Next.js', 'TypeScript', 'Stripe', 'Tailwind CSS'],
-    github: 'https://github.com/kavyantrics/ecommerce',
-    demo: 'https://ecommerce.adarsh.dev',
-  },
-  {
-    title: 'Task Management App',
-    description: 'A collaborative task management application with real-time updates and team features.',
-    image: '/projects/taskmanager.jpg',
-    tags: ['React', 'Node.js', 'Socket.io', 'MongoDB'],
-    github: 'https://github.com/kavyantrics/taskmanager',
-    demo: 'https://tasks.adarsh.dev',
-  },
-  {
-    title: 'AI Image Generator',
-    description: 'An AI-powered image generation tool using OpenAI&apos;s DALL-E API.',
-    image: '/projects/aigenerator.jpg',
-    tags: ['React', 'OpenAI', 'Node.js', 'Tailwind CSS'],
-    github: 'https://github.com/kavyantrics/ai-generator',
-    demo: 'https://ai.adarsh.dev',
-  },
-];
+type ProjectsProps = {
+  projects: Project[]
+}
 
-export default function Projects() {
+const Projects = ({ projects }: ProjectsProps) => {
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>(projects)
+  const [activeFilter, setActiveFilter] = useState<string>('All')
+  
+  // Extract all unique tags from projects
+  const allTags = ['All', ...Array.from(new Set(projects.flatMap(project => project.tags)))]
+  
+  // Filter projects when activeFilter changes
+  useEffect(() => {
+    if (activeFilter === 'All') {
+      setFilteredProjects(projects)
+    } else {
+      setFilteredProjects(projects.filter(project => 
+        project.tags.includes(activeFilter)
+      ))
+    }
+  }, [activeFilter, projects])
+  
   return (
-    <section id="projects" className="py-20 px-4 md:px-8 lg:px-16 bg-background/50">
-      <div className="container mx-auto max-w-6xl">
-        <motion.div
+    <div className="container mx-auto py-12 font-mono">
+
+       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
-            <span className="text-secondary">Featured</span> Projects
+            <h2 className="text-3xl sm:text-4xl md:text-4xl font-bold uppercase tracking-wider mb-12 md:mb-16 text-center">
+            <span className="text-accent">Featured</span> <span className="text-gray-100">Projects</span>
           </h2>
           <p className="text-foreground/80 max-w-2xl mx-auto">
             Here are some of my recent projects that showcase my skills and experience.
@@ -59,90 +57,80 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-background rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <div className="relative h-48">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                <p className="text-foreground/80 mb-4">{project.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-sm bg-secondary/10 text-secondary rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex gap-4">
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-secondary hover:text-secondary/80 transition-colors"
-                  >
-                    GitHub
-                  </a>
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-secondary hover:text-secondary/80 transition-colors"
-                  >
-                    Live Demo
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-12 text-center"
-        >
-          <a
-            href="https://github.com/kavyantrics"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 border border-secondary text-secondary hover:bg-secondary/10 rounded-full font-medium transition-colors"
+      {/* Filter Buttons */}
+      <div className="flex flex-wrap justify-center gap-3 mb-16">
+        {allTags.map((tag) => (
+          <motion.button
+            key={tag}
+            onClick={() => setActiveFilter(tag)}
+            className={`px-5 py-2.5 rounded-md text-sm font-semibold border transition-all duration-200 ease-in-out 
+                        ${activeFilter === tag 
+                          ? 'bg-accent text-[#18181b] border-accent shadow-neon-sm' 
+                          : 'bg-transparent text-gray-300 border-gray-600 hover:text-accent hover:border-accent hover:shadow-neon-sm'}`}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
           >
-            View All Projects
-            <svg
-              className="w-4 h-4 ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
-          </a>
-        </motion.div>
+            {tag}
+          </motion.button>
+        ))}
       </div>
-    </section>
-  );
-} 
+      
+      {/* Projects Grid */}
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={activeFilter}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          {filteredProjects.map((project) => (
+            <ProjectCard3D 
+              key={project.id}
+              title={project.title}
+              description={project.description}
+              tags={project.tags}
+              imageUrl={project.imageUrl}
+              modelPath={project.modelPath}
+              demoUrl={project.demoUrl}
+              githubUrl={project.githubUrl}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
+      
+      {/* Empty State */}
+      {filteredProjects.length === 0 && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-12"
+        >
+          <p className="text-gray-500 text-lg">No projects found matching that filter.</p>
+        </motion.div>
+      )}
+
+      {/* View All Projects Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="mt-16 sm:mt-20 text-center"
+      >
+        <a
+          href="https://github.com/kavyantrics"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center px-8 py-3 border-2 border-accent text-accent hover:bg-accent hover:text-[#18181b] rounded-lg font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-neon-sm focus:outline-none focus:ring-4 focus:ring-accent/50"
+        >
+          View All Projects
+          <Github size={18} className="ml-2.5" />
+        </a>
+      </motion.div>
+    </div>
+  )
+}
+
+export default Projects

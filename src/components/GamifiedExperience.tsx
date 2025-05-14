@@ -272,114 +272,143 @@ export default function GamifiedExperience() {
   const getIcon = (icon: string) => {
     switch (icon) {
       case 'trophy':
-        return <Trophy className="w-6 h-6" />;
+        return <Trophy className="w-6 h-6 text-accent" />;
       case 'star':
-        return <Star className="w-6 h-6" />;
+        return <Star className="w-6 h-6 text-accent" />;
       case 'zap':
-        return <Zap className="w-6 h-6" />;
+        return <Zap className="w-6 h-6 text-accent" />;
       case 'target':
-        return <Target className="w-6 h-6" />;
+        return <Target className="w-6 h-6 text-accent" />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-50">
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 w-80"
-      >
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">Total XP: {totalXp}</h3>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${(totalXp % 1000) / 10}%` }}
-              className="bg-blue-500 h-2 rounded-full"
-            />
-          </div>
+    <section className="py-20 px-4 md:px-8 bg-[#18181b] font-mono text-gray-300">
+      <div className="container mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-12 text-accent uppercase tracking-wider">
+          Your Progress
+        </h2>
+
+        <div className="text-center mb-12">
+          <p className="text-2xl">
+            Total XP: <span className="text-accent font-bold">{totalXp}</span>
+          </p>
+          {/* You could add an overall progress bar here if desired */}
         </div>
 
-        <div className="space-y-4">
-          <h4 className="font-semibold">Skills</h4>
-          <div className="grid grid-cols-2 gap-2">
-            {userSkills.map((skill) => (
-              <motion.div
-                key={skill.id}
-                whileHover={{ scale: 1.05 }}
-                className={`p-2 rounded ${
-                  skill.unlocked
-                    ? 'bg-blue-100 dark:bg-blue-900'
-                    : 'bg-gray-100 dark:bg-gray-700'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">{skill.name}</span>
-                  {skill.unlocked ? (
-                    <Unlock className="w-4 h-4 text-blue-500" />
-                  ) : (
-                    <Lock className="w-4 h-4 text-gray-400" />
-                  )}
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(skill.xp % skill.maxXp) / skill.maxXp * 100}%` }}
-                    className="bg-blue-500 h-1 rounded-full"
-                  />
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  Level {skill.level}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <h4 className="font-semibold mb-2">Achievements</h4>
-          <div className="space-y-2">
-            {userAchievements.map((achievement) => (
-              <motion.div
-                key={achievement.id}
-                whileHover={{ scale: 1.02 }}
-                className={`p-2 rounded flex items-center gap-2 ${
-                  achievement.unlocked
-                    ? 'bg-green-100 dark:bg-green-900'
-                    : 'bg-gray-100 dark:bg-gray-700'
-                }`}
-              >
-                {getIcon(achievement.icon)}
-                <div className="flex-1">
-                  <div className="text-sm font-medium">{achievement.title}</div>
-                  <div className="text-xs text-gray-500">
-                    {achievement.progress}/{achievement.maxProgress}
+        <div className="grid md:grid-cols-2 gap-12 mb-16">
+          <div>
+            <h3 className="text-3xl font-semibold mb-8 text-center text-gray-100 uppercase tracking-wide">Achievements</h3>
+            <div className="space-y-6">
+              {userAchievements.map((achievement) => (
+                <motion.div
+                  key={achievement.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className={`p-6 rounded-lg border ${achievement.unlocked ? 'border-accent shadow-neon bg-[#27272a]' : 'border-gray-700 bg-[#222225]'} `}
+                >
+                  <div className="flex items-center mb-3">
+                    <div className={`mr-4 p-2 rounded-full ${achievement.unlocked ? 'bg-accent/10' : 'bg-gray-700/30'}`}>
+                      {getIcon(achievement.icon)}
+                    </div>
+                    <div>
+                      <h4 className={`text-xl font-semibold ${achievement.unlocked ? 'text-accent' : 'text-gray-400'}`}>
+                        {achievement.title}
+                      </h4>
+                      <p className="text-xs text-gray-500">{achievement.description}</p>
+                    </div>
+                    <div className="ml-auto text-right">
+                      {achievement.unlocked ? (
+                        <Unlock className="w-5 h-5 text-accent" />
+                      ) : (
+                        <Lock className="w-5 h-5 text-gray-600" />
+                      )}
+                      <p className={`text-sm font-bold ${achievement.unlocked ? 'text-accent' : 'text-gray-600'}`}>
+                        {achievement.xp} XP
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="text-xs font-medium text-blue-500">
-                  +{achievement.xp} XP
-                </div>
-              </motion.div>
-            ))}
+                  {!achievement.unlocked && achievement.maxProgress > 1 && (
+                    <div className="mt-2">
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <motion.div
+                          className="bg-accent h-2 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(achievement.progress / achievement.maxProgress) * 100}%` }}
+                          transition={{ duration: 0.5 }}
+                        />
+                      </div>
+                      <p className="text-xs text-right text-gray-500 mt-1">
+                        {achievement.progress}/{achievement.maxProgress}
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-3xl font-semibold mb-8 text-center text-gray-100 uppercase tracking-wide">Skills</h3>
+            <div className="space-y-6">
+              {userSkills.map((skill) => (
+                <motion.div
+                  key={skill.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className={`p-6 rounded-lg border ${skill.unlocked ? 'border-accent shadow-neon bg-[#27272a]' : 'border-gray-700 bg-[#222225]'}`}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className={`text-xl font-semibold ${skill.unlocked ? 'text-accent' : 'text-gray-400'}`}>
+                      {skill.name}
+                    </h4>
+                    <span className={`text-sm font-bold ${skill.unlocked ? 'text-accent' : 'text-gray-500'}`}>
+                      Lvl {skill.level}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2.5">
+                    <motion.div
+                      className="bg-accent h-2.5 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(skill.xp / skill.maxXp) * 100}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>XP: {skill.xp} / {skill.maxXp}</span>
+                    {skill.unlocked ? (
+                        <span className="text-accent">Unlocked!</span>
+                      ) : (
+                        <span>Locked</span>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
-      </motion.div>
 
-      <AnimatePresence>
-        {showNotification && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
-          >
-            <div className="font-medium">{notification.title}</div>
-            <div className="text-sm">+{notification.xp} XP</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        <AnimatePresence>
+          {showNotification && (
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.3 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.5 }}
+              className="fixed bottom-10 right-10 bg-[#27272a] border border-accent shadow-neon p-6 rounded-lg text-center z-50"
+            >
+              <div className="flex items-center mb-2">
+                <Trophy className="w-6 h-6 text-accent mr-3" />
+                <h5 className="text-lg font-semibold text-accent">{notification.title}</h5>
+              </div>
+              <p className="text-gray-300">You earned <span className="font-bold text-accent">{notification.xp} XP</span>!</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
   );
 } 
