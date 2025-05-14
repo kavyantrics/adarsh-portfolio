@@ -3,6 +3,7 @@ import path from 'path';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import Image from 'next/image';
 
 interface PostPageProps {
   params: {
@@ -101,9 +102,10 @@ export default async function PostPage({ params }: PostPageProps) {
 
           {post.image && (
             <div className="relative w-full h-auto sm:h-[350px] md:h-[450px] mb-10 md:mb-12 rounded-lg overflow-hidden shadow-lg border border-accent/10">
-              <img
+              <Image
                 src={post.image}
                 alt={post.title}
+                fill={true}
                 className="w-full h-full object-cover"
               />
             </div>

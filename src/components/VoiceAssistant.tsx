@@ -11,18 +11,40 @@ interface Experience {
   description: string;
 }
 
-// Default Event type for SpeechRecognitionEvent and SpeechRecognitionErrorEvent
-// as specific properties are causing persistent issues with TS built-in libs.
+// Local interfaces for SpeechRecognition event handlers
+interface SpeechRecognitionEventWithResults extends Event {
+  readonly resultIndex: number;
+  readonly results: {
+    readonly length: number;
+    item(index: number): {
+      readonly length: number;
+      item(index: number): { transcript: string };
+      [index: number]: { transcript: string };
+      isFinal: boolean;
+    };
+    [index: number]: {
+      readonly length: number;
+      item(index: number): { transcript: string };
+      [index: number]: { transcript: string };
+      isFinal: boolean;
+    };
+  };
+}
+
+interface SpeechRecognitionErrorEventWithError extends Event {
+  readonly error: string;
+  readonly message: string;
+}
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
-  onresult: (event) => void;
+  onresult: (event: SpeechRecognitionEventWithResults) => void; // Using local interface
   onend: () => void;
   start: () => void;
   stop: () => void;
-  onerror: (event) => void;
+  onerror: (event: SpeechRecognitionErrorEventWithError) => void; // Using local interface
 }
 
 declare global {
@@ -71,9 +93,9 @@ export default function VoiceAssistant() {
     let synthesis: SpeechSynthesis | null = null;
 
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
+      const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognitionImpl) {
+        recognition = new SpeechRecognitionImpl();
         recognition.continuous = false;
         recognition.interimResults = false;
         recognition.lang = 'en-US';
@@ -117,6 +139,7 @@ export default function VoiceAssistant() {
         synthesis.cancel();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleVoiceCommand = (command: string) => {
@@ -150,14 +173,14 @@ export default function VoiceAssistant() {
 
   const toggleListening = () => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
+      const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognitionImpl) {
+        const currentRecognition = new SpeechRecognitionImpl();
+        currentRecognition.continuous = false;
+        currentRecognition.interimResults = true;
+        currentRecognition.lang = 'en-US';
 
-        recognition.onresult = (event) => {
+        currentRecognition.onresult = (event) => {
           let finalTranscript = '';
           let interimTranscript = '';
           for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -174,11 +197,11 @@ export default function VoiceAssistant() {
           }
         };
 
-        recognition.onend = () => {
+        currentRecognition.onend = () => {
           setIsListening(false);
         };
 
-        recognition.onerror = (event) => {
+        currentRecognition.onerror = (event) => {
           console.error("Speech recognition error", event.error, event.message);
           setIsListening(false);
           setTranscript('Error listening. Try again.');
@@ -186,7 +209,7 @@ export default function VoiceAssistant() {
 
         if (!isListening) {
           try {
-            recognition.start();
+            currentRecognition.start();
             setIsListening(true);
             setResponse('');
             setTranscript('Listening...');
@@ -196,7 +219,7 @@ export default function VoiceAssistant() {
             setTranscript('Mic access denied?');
           }
         } else {
-          recognition.stop();
+          currentRecognition.stop();
           setIsListening(false);
         }
       }

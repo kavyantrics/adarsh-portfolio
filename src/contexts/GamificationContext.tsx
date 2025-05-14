@@ -14,8 +14,11 @@ const GamificationContext = createContext<GamificationContextType | undefined>(u
 export function GamificationProvider({ children }: { children: ReactNode }) {
   const [showNotification, setShowNotification] = useState(false);
   const [notification, setNotification] = useState({ title: '', xp: 0 });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [totalXp, setTotalXp] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [achievements, setAchievements] = useState<Record<string, { progress: number; unlocked: boolean }>>({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [skills, setSkills] = useState<Record<string, { xp: number; level: number }>>({});
 
   const updateAchievement = (id: string, progress: number) => {

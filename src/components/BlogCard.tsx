@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { CalendarDays, Tag } from 'lucide-react';
+import Image from 'next/image';
 
 interface BlogCardProps {
   title: string;
@@ -25,9 +26,10 @@ const BlogCard = ({ title, description, date, tags, slug, image }: BlogCardProps
     >
       {image && (
         <div className="relative h-52 w-full overflow-hidden">
-          <img
+          <Image
             src={image}
             alt={title}
+            fill={true}
             className="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-300"></div>

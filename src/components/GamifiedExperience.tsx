@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Star, Zap, Target, Lock, Unlock } from 'lucide-react';
 
@@ -153,15 +153,66 @@ export default function GamifiedExperience() {
   const [showNotification, setShowNotification] = useState(false);
   const [notification, setNotification] = useState({ title: '', xp: 0 });
 
+  const addXp = useCallback((amount: number) => {
+    setTotalXp((prev) => prev + amount);
+  }, []);
+
+  const showAchievementNotification = useCallback((title: string, xp: number) => {
+    setNotification({ title, xp });
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  }, []);
+
+  const updateAchievement = useCallback((id: string, progress: number) => {
+    setUserAchievements((prev) =>
+      prev.map((achievement) => {
+        if (achievement.id === id) {
+          const newProgress = achievement.progress + progress;
+          const unlocked = newProgress >= achievement.maxProgress;
+          if (unlocked && !achievement.unlocked) {
+            addXp(achievement.xp);
+            showAchievementNotification(achievement.title, achievement.xp);
+          }
+          return {
+            ...achievement,
+            progress: newProgress,
+            unlocked,
+          };
+        }
+        return achievement;
+      })
+    );
+  }, [addXp, showAchievementNotification]);
+
+  const updateSkill = useCallback((id: string, xp: number) => {
+    setUserSkills((prev) =>
+      prev.map((skill) => {
+        if (skill.id === id) {
+          const newXp = skill.xp + xp;
+          const newLevel = Math.floor(newXp / skill.maxXp) + 1;
+          const unlocked = newLevel > 1;
+          if (unlocked && !skill.unlocked) {
+            showAchievementNotification(`${skill.name} Unlocked!`, 50);
+          }
+          return {
+            ...skill,
+            xp: newXp,
+            level: newLevel,
+            unlocked,
+          };
+        }
+        return skill;
+      })
+    );
+  }, [showAchievementNotification]);
+
   useEffect(() => {
-    // Check for first visit
     const hasVisited = localStorage.getItem('hasVisited');
     if (!hasVisited) {
       localStorage.setItem('hasVisited', 'true');
       updateAchievement('first-visit', 1);
     }
 
-    // Add event listeners for interactive elements
     const handleProjectView = () => {
       updateAchievement('project-explorer', 1);
       updateSkill('react', 10);
@@ -197,7 +248,6 @@ export default function GamifiedExperience() {
       addXp(10);
     };
 
-    // Add event listeners
     document.addEventListener('project-view', handleProjectView);
     document.addEventListener('github-view', handleGitHubView);
     document.addEventListener('kubernetes-interaction', handleKubernetesInteraction);
@@ -206,7 +256,6 @@ export default function GamifiedExperience() {
     document.addEventListener('testimonial-view', handleTestimonialView);
 
     return () => {
-      // Cleanup event listeners
       document.removeEventListener('project-view', handleProjectView);
       document.removeEventListener('github-view', handleGitHubView);
       document.removeEventListener('kubernetes-interaction', handleKubernetesInteraction);
@@ -214,60 +263,7 @@ export default function GamifiedExperience() {
       document.removeEventListener('resume-download', handleResumeDownload);
       document.removeEventListener('testimonial-view', handleTestimonialView);
     };
-  }, []);
-
-  const updateAchievement = (id: string, progress: number) => {
-    setUserAchievements((prev) =>
-      prev.map((achievement) => {
-        if (achievement.id === id) {
-          const newProgress = achievement.progress + progress;
-          const unlocked = newProgress >= achievement.maxProgress;
-          if (unlocked && !achievement.unlocked) {
-            addXp(achievement.xp);
-            showAchievementNotification(achievement.title, achievement.xp);
-          }
-          return {
-            ...achievement,
-            progress: newProgress,
-            unlocked,
-          };
-        }
-        return achievement;
-      })
-    );
-  };
-
-  const updateSkill = (id: string, xp: number) => {
-    setUserSkills((prev) =>
-      prev.map((skill) => {
-        if (skill.id === id) {
-          const newXp = skill.xp + xp;
-          const newLevel = Math.floor(newXp / skill.maxXp) + 1;
-          const unlocked = newLevel > 1;
-          if (unlocked && !skill.unlocked) {
-            showAchievementNotification(`${skill.name} Unlocked!`, 50);
-          }
-          return {
-            ...skill,
-            xp: newXp,
-            level: newLevel,
-            unlocked,
-          };
-        }
-        return skill;
-      })
-    );
-  };
-
-  const addXp = (amount: number) => {
-    setTotalXp((prev) => prev + amount);
-  };
-
-  const showAchievementNotification = (title: string, xp: number) => {
-    setNotification({ title, xp });
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
-  };
+  }, [updateAchievement, updateSkill, addXp]);
 
   const getIcon = (icon: string) => {
     switch (icon) {
