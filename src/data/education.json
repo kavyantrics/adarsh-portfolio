@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "degree": "Bachelor of Technology",
+    "institution": "BCET, Durgapur",
+    "date": "2017 – 2021"
+  },
+  {
+    "id": 2,
+    "degree": "Higher Secondary",
+    "institution": "St. Paul's Day School, Kolkata",
+    "date": "2015 – 2017"
+  }
+] 

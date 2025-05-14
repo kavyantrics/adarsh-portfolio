@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Software Engineer",
+    "company": "Softway Solutions",
+    "location": "Remote - Bangalore, India",
+    "date": "May 2023 – Present",
+    "responsibilities": [
+      "Achieved 99.99% uptime by deploying production workloads on AWS EKS using Docker containers.",
+      "Cut deployment time by 60% through automated CI/CD pipelines with GitHub Actions.",
+      "Increased code reliability by 40% by enforcing ESLint and Husky pre-commit checks.",
+      "Improved database performance by 30% through efficient MySQL schema design with Prisma.",
+      "Scaled a full-stack SaaS platform to 25,000+ monthly users using Next.js and Node.js."
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Full Stack Engineer",
+    "company": "InviGrid Co.",
+    "location": "Remote - USA",
+    "date": "Jan 2022 – May 2023",
+    "responsibilities": [
+      "Reduced data load times by 45% in analytics dashboards using React, Redux, and Auth0.",
+      "Shortened release cycles from 4 days to 1 by deploying CI/CD pipelines on AWS EC2.",
+      "Cut server costs by 20% by migrating to optimized 2-tier AWS architecture.",
+      "Enhanced backend reliability and security by integrating AWS/GCP APIs and Auth0-protected endpoints.",
+      "Delivered robust backend APIs with Express and Node.js, powering real-time analytics modules."
+    ]
+  }
+] 

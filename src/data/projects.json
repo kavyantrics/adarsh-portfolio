@@ -1,32 +1,32 @@
 [
   {
     "id": 1,
-    "title": "E-commerce Platform",
-    "description": "A full-stack e-commerce platform with React, Node.js, and MongoDB",
-    "tags": ["React", "Node.js", "MongoDB", "Express"],
-    "imageUrl": "/projects/ecommerce.jpg",
-    "demoUrl": "https://example.com/demo",
-    "githubUrl": "https://github.com/adarsh/ecommerce",
-    "modelPath": "/models/react_logo.glb"
+    "title": "AI-Powered Web Vulnerability Scanner VulnerShield",
+    "description": "Developed a DevSecOps tool that integrates OWASP ZAP with AI-based anomaly detection. Automates discovery of XSS, SQL Injection, and CSRF vulnerabilities across web apps and APIs. Generates real-time security reports with prioritized remediation steps.",
+    "tags": ["Node.js", "Python", "Docker", "DevSecOps", "AI", "OWASP ZAP"],
+    "imageUrl": "/images/projects/vulnershield.png",
+    "demoUrl": "",
+    "githubUrl": "",
+    "modelPath": ""
   },
   {
     "id": 2,
-    "title": "AI Dashboard",
-    "description": "Interactive dashboard for visualizing AI model performance metrics",
-    "tags": ["Python", "TensorFlow", "React", "D3.js"],
-    "imageUrl": "/projects/ai-dashboard.jpg",
-    "demoUrl": "https://example.com/ai-demo",
-    "githubUrl": "https://github.com/adarsh/ai-dashboard",
-    "modelPath": "/models/ai_brain.glb"
+    "title": "Cost Optimization and Security Dashboard CloudGuard",
+    "description": "Built a cloud monitoring tool that tracks AWS resource costs and security compliance metrics. Visualizes budget leaks and IAM misconfigurations with actionable insights. Integrated with AWS Cost Explorer, CloudWatch, and Security Hub APIs for live reporting.",
+    "tags": ["Next.js", "Chart.js", "AWS", "CloudWatch", "Security Hub"],
+    "imageUrl": "/images/projects/cloudguard.png",
+    "demoUrl": "",
+    "githubUrl": "",
+    "modelPath": ""
   },
   {
     "id": 3,
-    "title": "Mobile App",
-    "description": "Cross-platform mobile application for task management",
-    "tags": ["React Native", "Firebase", "Redux"],
-    "imageUrl": "/projects/mobile-app.jpg",
-    "demoUrl": "https://example.com/mobile-demo",
-    "githubUrl": "https://github.com/adarsh/mobile-app",
-    "modelPath": "/models/mobile_device.glb"
+    "title": "Real-Time PDF Collaboration ByteDialogue",
+    "description": "Engineered a scalable PDF review system using Next.js 13, Prisma, tRPC, Tailwind CSS. Enabled contextual discussions and comments by 100+ users with real-time sync over WebSockets.",
+    "tags": ["Next.js", "Prisma", "tRPC", "Tailwind CSS", "WebSockets"],
+    "imageUrl": "/images/projects/bytedialogue.png",
+    "demoUrl": "",
+    "githubUrl": "",
+    "modelPath": ""
   }
 ]

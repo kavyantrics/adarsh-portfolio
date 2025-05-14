@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Machine Learning A-Z",
+    "issuer": "Udemy",
+    "status": "Completed"
+  },
+  {
+    "id": 2,
+    "name": "Web Dev Bootcamp",
+    "issuer": "Coding Blocks x Nagarro",
+    "status": "Completed"
+  },
+  {
+    "id": 3,
+    "name": "Azure AZ-400",
+    "issuer": "Microsoft",
+    "status": "In Progress"
+  },
+  {
+    "id": 4,
+    "name": "AWS DevOps",
+    "issuer": "AWS",
+    "status": "Planned"
+  }
+] 

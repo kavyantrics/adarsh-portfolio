@@ -24,7 +24,7 @@ const Navbar = () => {
 
   return (
     <motion.header 
-      className="fixed w-full z-50 py-4"
+      className="fixed w-full z-50 py-4 bg-background border-b border-border/20 shadow-sm"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

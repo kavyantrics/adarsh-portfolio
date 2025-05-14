@@ -24,11 +24,12 @@ const nextConfig = {
     domains: [
       'github.com',
       'raw.githubusercontent.com',
-      'avatars.githubusercontent.com'
+      'avatars.githubusercontent.com',
     ],
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+    },
   },
 };
 
