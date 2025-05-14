@@ -21,6 +21,12 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  output: 'export',
+  images: {
+    unoptimized: true,
+  },
+  basePath: '/adarsh-portfolio',
+  assetPrefix: '/adarsh-portfolio/',
 };
 
 export default withMDX(nextConfig); 
