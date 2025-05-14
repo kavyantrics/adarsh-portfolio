@@ -10,7 +10,6 @@ import GitHubActivity from '@/components/GitHubActivity';
 import { getPinnedRepos, getRecentCommits, getContributions } from '@/lib/github';
 import Contact from '@/components/Contact';
 import KubernetesPlayground from '@/components/KubernetesPlayground';
-import ResumeBuilder from '@/components/ResumeBuilder';
 // import VoiceAssistant from '@/components/VoiceAssistant';
 import QABot from '@/components/QABot';
 // import GamifiedExperience from '@/components/GamifiedExperience';
@@ -132,8 +131,6 @@ export default async function Home() {
             <KubernetesPlayground />
           </div>
         </section>
-        
-        <ResumeBuilder />
         
         <Contact />
       </div>

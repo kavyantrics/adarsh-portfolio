@@ -8,7 +8,7 @@ if (!process.env.GITHUB_TOKEN) {
 }
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'adarshkumarsingh83';
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'kavyantrics';
 
 interface GitHubRepo {
   name: string;
@@ -54,7 +54,7 @@ const fallbackRepos: GitHubRepo[] = [
     stargazers_count: 0,
     forks_count: 0,
     language: "TypeScript",
-    html_url: "https://github.com/adarshkumarsingh83/adarsh-portfolio"
+    html_url: "https://github.com/kavyantrics/adarsh-portfolio"
   },
   {
     name: "project-2",
@@ -62,7 +62,7 @@ const fallbackRepos: GitHubRepo[] = [
     stargazers_count: 0,
     forks_count: 0,
     language: "JavaScript",
-    html_url: "https://github.com/adarshkumarsingh83/project-2"
+    html_url: "https://github.com/kavyantrics/project-2"
   }
 ];
 
@@ -75,7 +75,7 @@ const fallbackCommits: GitHubCommit[] = [
         date: new Date().toISOString()
       }
     },
-    html_url: "https://github.com/adarshkumarsingh83/adarsh-portfolio/commit/abc123"
+    html_url: "https://github.com/kavyantrics/adarsh-portfolio/commit/abc123"
   }
 ];
 

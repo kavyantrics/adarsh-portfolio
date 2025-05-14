@@ -160,7 +160,7 @@ export default function Contact() {
               <h3 className="font-medium mb-2">Social</h3>
               <div className="flex justify-center space-x-4">
                 <a
-                  href="https://github.com/adarshkumarsingh83"
+                  href="https://github.com/kavyantrics"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-secondary hover:text-secondary/80"
@@ -168,7 +168,7 @@ export default function Contact() {
                   GitHub
                 </a>
                 <a
-                  href="https://linkedin.com/in/adarshkumarsingh83"
+                  href="https://linkedin.com/in/kavyantrics"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-secondary hover:text-secondary/80"

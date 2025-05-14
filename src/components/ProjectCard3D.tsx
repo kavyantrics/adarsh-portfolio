@@ -1,101 +1,68 @@
 'use client'
 
-import { Suspense, useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF, Environment, ContactShadows, OrbitControls } from '@react-three/drei'
+import { Environment, ContactShadows, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import Link from 'next/link'
-
-// Define model paths for different project types
-const MODEL_PATHS = {
-  'React': '/models/code_block.glb',      // Use code_block.glb as temporary fallback
-  'Node.js': '/models/code_block.glb',
-  'MongoDB': '/models/code_block.glb',
-  'Python': '/models/code_block.glb',
-  'TensorFlow': '/models/code_block.glb',
-  'React Native': '/models/code_block.glb',
-  'Firebase': '/models/code_block.glb',
-  'Default': '/models/code_block.glb'
-}
 
 // Model component that renders the 3D object
-function Model({ tags, isHovered }: { tags: string[], isHovered: boolean }) {
-  const [mounted, setMounted] = useState(false)
-  const modelRef = useRef<THREE.Mesh>(null)
+function Model({ isHovered }: { tags: string[], isHovered: boolean }) {
+  const meshRef = useRef<THREE.Mesh>(null)
   
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Only render the model on the client side
-  if (!mounted) {
-    return null
-  }
-
-  const primaryTag = tags[0]
-  const modelPath = MODEL_PATHS[primaryTag] || MODEL_PATHS.Default
-  
-  // Add error boundary for model loading
-  try {
-    const { scene } = useGLTF(modelPath)
-    
-    useFrame((state) => {
-      if (modelRef.current) {
-        modelRef.current.rotation.y += isHovered ? 0.015 : 0.005
-        if (isHovered) {
-          modelRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1
-        }
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += isHovered ? 0.015 : 0.005
+      if (isHovered) {
+        meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1
       }
-    })
-    
-    return <primitive object={scene.clone()} ref={modelRef} />
-  } catch (error) {
-    console.error('Error loading model:', error)
-    return (
-      <mesh ref={modelRef}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={isHovered ? "#646cff" : "#535bf2"} />
-      </mesh>
-    )
-  }
+    }
+  })
+
+  return (
+    <mesh ref={meshRef}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial 
+        color={isHovered ? "#646cff" : "#535bf2"}
+        roughness={0.3}
+        metalness={0.7}
+      />
+    </mesh>
+  )
 }
 
 type ProjectCard3DProps = {
-  id: number
+  // id: number
   title: string
   description: string
   tags: string[]
-  imageUrl: string
+  // imageUrl: string
   demoUrl?: string
   githubUrl?: string
-  modelPath?: string
+  // modelPath?: string
 }
 
 export default function ProjectCard3D({ 
-  id, 
   title, 
   description, 
   tags, 
-  imageUrl, 
   demoUrl, 
   githubUrl,
-  modelPath 
 }: ProjectCard3DProps) {
   const [isHovered, setIsHovered] = useState(false)
   
   return (
     <motion.div 
-      className="bg-background border border-primary/20 rounded-lg overflow-hidden shadow-lg flex flex-col h-full"
+      className={`bg-background border border-primary/20 rounded-lg overflow-hidden flex flex-col h-full transition-shadow ${
+        isHovered ? 'shadow-2xl' : 'shadow-lg'
+      }`}
       whileHover={{ 
         y: -10, 
-        scale: 1.02,
-        boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.2)' 
+        scale: 1.02
       }}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
@@ -171,6 +138,3 @@ export default function ProjectCard3D({
     </motion.div>
   )
 }
-
-// Preload all models
-useGLTF.preload(Object.values(MODEL_PATHS))

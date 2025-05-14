@@ -18,7 +18,7 @@ const projects: Project[] = [
     description: 'A full-stack e-commerce platform built with Next.js, TypeScript, and Stripe integration.',
     image: '/projects/ecommerce.jpg',
     tags: ['Next.js', 'TypeScript', 'Stripe', 'Tailwind CSS'],
-    github: 'https://github.com/adarshkumarsingh83/ecommerce',
+    github: 'https://github.com/kavyantrics/ecommerce',
     demo: 'https://ecommerce.adarsh.dev',
   },
   {
@@ -26,7 +26,7 @@ const projects: Project[] = [
     description: 'A collaborative task management application with real-time updates and team features.',
     image: '/projects/taskmanager.jpg',
     tags: ['React', 'Node.js', 'Socket.io', 'MongoDB'],
-    github: 'https://github.com/adarshkumarsingh83/taskmanager',
+    github: 'https://github.com/kavyantrics/taskmanager',
     demo: 'https://tasks.adarsh.dev',
   },
   {
@@ -34,7 +34,7 @@ const projects: Project[] = [
     description: 'An AI-powered image generation tool using OpenAI&apos;s DALL-E API.',
     image: '/projects/aigenerator.jpg',
     tags: ['React', 'OpenAI', 'Node.js', 'Tailwind CSS'],
-    github: 'https://github.com/adarshkumarsingh83/ai-generator',
+    github: 'https://github.com/kavyantrics/ai-generator',
     demo: 'https://ai.adarsh.dev',
   },
 ];
@@ -121,7 +121,7 @@ export default function Projects() {
           className="mt-12 text-center"
         >
           <a
-            href="https://github.com/adarshkumarsingh83"
+            href="https://github.com/kavyantrics"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-6 py-3 border border-secondary text-secondary hover:bg-secondary/10 rounded-full font-medium transition-colors"

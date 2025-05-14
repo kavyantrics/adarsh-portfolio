@@ -1,10 +1,10 @@
 'use client';
 
-import { useMDXComponent } from 'next-contentlayer/hooks';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { ComponentProps, ReactElement } from 'react';
 
 interface MDXContentProps {
-  code: string;
+  source: MDXRemoteSerializeResult;
 }
 
 type MDXComponents = {
@@ -55,11 +55,10 @@ const components: MDXComponents = {
   ),
 };
 
-export function MDXContent({ code }: MDXContentProps) {
-  const Component = useMDXComponent(code);
+export function MDXContent({ source }: MDXContentProps) {
   return (
     <div className="mdx">
-      <Component components={components} />
+      <MDXRemote {...source} components={components} />
     </div>
   );
 } 

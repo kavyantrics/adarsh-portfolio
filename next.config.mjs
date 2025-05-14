@@ -19,14 +19,17 @@ const withMDX = createMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-  output: 'export',
   images: {
-    unoptimized: true,
+    domains: [
+      'github.com',
+      'raw.githubusercontent.com',
+      'avatars.githubusercontent.com'
+    ],
   },
-  basePath: '/adarsh-portfolio',
-  assetPrefix: '/adarsh-portfolio/',
+  experimental: {
+    serverActions: true,
+  },
 };
 
 export default withMDX(nextConfig); 
