@@ -58,9 +58,13 @@ export const collectClientData = async (): Promise<ClientData> => {
     language: navigator.language,
     
     // Network information
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     connectionType: (navigator as any).connection?.type,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     effectiveType: (navigator as any).connection?.effectiveType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     downlink: (navigator as any).connection?.downlink,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rtt: (navigator as any).connection?.rtt,
     
     // Browser capabilities
@@ -81,6 +85,7 @@ export const collectClientData = async (): Promise<ClientData> => {
     touchSupport: 'ontouchstart' in window,
     maxTouchPoints: navigator.maxTouchPoints || 0,
     hardwareConcurrency: navigator.hardwareConcurrency || 0,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     deviceMemory: (navigator as any).deviceMemory,
     
     // Browser features
@@ -102,7 +107,7 @@ export const collectClientData = async (): Promise<ClientData> => {
         data.region = 'Unknown';  // Would be set by geocoding service
       }
     }
-  } catch (error) {
+  } catch {
     console.log('Geolocation not available or denied');
   }
 
@@ -161,33 +166,30 @@ const getCurrentPosition = (): Promise<GeolocationPosition | null> => {
 };
 
 // Enhanced tracking with client data
-export const trackPageView = async (page: string) => {
+export async function trackPageView(page: string, clientData?: Partial<ClientData>) {
   try {
-    const clientData = await collectClientData();
-    
+    const data = await collectClientData();
     const response = await fetch('/api/analytics', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page, clientData }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        page,
+        clientData: { ...data, ...clientData },
+      }),
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      console.log('📊 Page view tracked:', {
-        page,
-        visitorId: result.visitorId,
-        sessionId: result.sessionId,
-        isFirstVisit: result.isFirstVisit,
-        visitCount: result.visitCount,
-      });
-      return result;
+    if (!response.ok) {
+      console.warn('Failed to track page view');
     }
-  } catch (error) {
-    console.error('Failed to track page view:', error);
+  } catch {
+    console.warn('Failed to track page view');
   }
-};
+}
 
 // Track user interactions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const trackEvent = (eventName: string, eventData?: Record<string, any>) => {
   try {
     // In a real implementation, you'd send this to your analytics service

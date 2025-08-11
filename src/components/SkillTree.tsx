@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Code, Database, Cloud, Server, Globe, Zap, Target, Star, 
-  Shield, Cpu, Network, Lock, Rocket, Layers, Gift, Dock,
-  Monitor, Smartphone, Tablet, Brain, Palette, Database as DbIcon
+  Cloud, Server, Globe, Target, Star, 
+  Shield, Rocket, Layers, Gift,
+  Monitor, Smartphone, Brain, Palette, Database as DbIcon
 } from 'lucide-react';
 
 interface SkillNode {

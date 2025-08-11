@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Users, Eye, MousePointer, TrendingUp, Monitor, Smartphone, Tablet,
-  Globe, Chrome, Clock, MapPin, Monitor as Browser, Cpu,
-  RefreshCw, Activity, Zap
+  Users, Globe, Monitor, Smartphone, Tablet, 
+  TrendingUp, Calendar, Clock, RefreshCw, Eye, EyeOff
 } from 'lucide-react';
 import { trackPageView } from '@/lib/clientAnalytics';
 
@@ -98,11 +97,11 @@ export default function AnalyticsDashboard() {
 
   const getBrowserIcon = (browser: string) => {
     switch (browser.toLowerCase()) {
-      case 'chrome': return <Chrome size={16} />;
+      case 'chrome': return <Globe size={16} />;
       case 'firefox': return <Globe size={16} />;
       case 'safari': return <Globe size={16} />;
       case 'edge': return <Globe size={16} />;
-      default: return <Browser size={16} />;
+      default: return <Globe size={16} />;
     }
   };
 
@@ -166,7 +165,7 @@ export default function AnalyticsDashboard() {
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Activity size={24} className="text-accent" />
+              <Globe size={24} className="text-accent" />
               <h3 className="text-xl font-semibold text-accent">Live Statistics</h3>
             </div>
             <button
@@ -219,7 +218,7 @@ export default function AnalyticsDashboard() {
               className="text-center"
             >
               <div className="flex items-center justify-center gap-2 mb-2">
-                <MousePointer size={20} className="text-accent" />
+                <EyeOff size={20} className="text-accent" />
                 <span className="text-sm text-gray-400">Unique</span>
               </div>
               <div className="text-2xl font-bold text-accent mb-1">{formatNumber(analytics.uniqueVisitors)}</div>
@@ -264,7 +263,7 @@ export default function AnalyticsDashboard() {
               className="text-center"
             >
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Zap size={20} className="text-accent" />
+                <Calendar size={20} className="text-accent" />
                 <span className="text-sm text-gray-400">This Month</span>
               </div>
               <div className="text-2xl font-bold text-accent mb-1">{analytics.thisMonthVisitors}</div>
@@ -280,7 +279,7 @@ export default function AnalyticsDashboard() {
             className="mt-6 pt-4 border-t border-accent/20 text-center"
           >
             <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-              <Activity size={16} className="text-green-400" />
+              <Globe size={16} className="text-green-400" />
               <span>Last visitor: {getTimeAgo(analytics.lastVisit)}</span>
             </div>
           </motion.div>
@@ -298,7 +297,7 @@ export default function AnalyticsDashboard() {
               key={tab.id}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as 'overview' | 'visitors' | 'devices' | 'traffic')}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                 activeTab === tab.id
                   ? 'bg-accent text-[#18181b] shadow-neon-md'
@@ -357,7 +356,7 @@ export default function AnalyticsDashboard() {
                   className="bg-[#27272a] p-6 rounded-lg border border-accent/30 shadow-neon-sm"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <MousePointer size={24} className="text-accent" />
+                    <EyeOff size={24} className="text-accent" />
                     <h3 className="text-lg font-semibold text-gray-100">Unique Visitors</h3>
                   </div>
                   <div className="text-3xl font-bold text-accent mb-2">{formatNumber(analytics.uniqueVisitors)}</div>
@@ -554,7 +553,7 @@ export default function AnalyticsDashboard() {
                       .map(([os, count]) => (
                         <div key={os} className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <Cpu size={16} className="text-accent" />
+                            <Globe size={16} className="text-accent" />
                             <span className="text-gray-300">{os}</span>
                           </div>
                           <div className="flex items-center gap-3">

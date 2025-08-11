@@ -15,7 +15,7 @@ export default function QABot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hey there! 👋 I'm Adarsh's personal AI sidekick. Ready to chat about tech, projects, or just shoot the breeze? What's on your mind?"
+      content: "Hey there! 👋 I&apos;m Adarsh&apos;s personal AI sidekick. Ready to chat about tech, projects, or just shoot the breeze? What&apos;s on your mind?"
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +93,7 @@ export default function QABot() {
           >
             <div className="p-4 border-b border-accent/20 flex justify-between items-center bg-[#27272a]/90">
               <h3 className="font-semibold text-lg text-accent flex items-center">
-                <Bot size={20} className="mr-2.5" /> Adarsh's Assistant
+                <Bot size={20} className="mr-2.5" /> Adarsh&apos;s Assistant
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
