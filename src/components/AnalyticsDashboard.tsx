@@ -57,35 +57,81 @@ export default function AnalyticsDashboard() {
     fetchRecentVisitors();
     setIsVisible(true);
 
+    // Smart polling with error handling
     const interval = setInterval(() => {
-      fetchAnalytics();
-      fetchRecentVisitors();
-    }, 30000);
+      // Only poll if there are no current errors
+      if (!isLoading) {
+        fetchAnalytics();
+        fetchRecentVisitors();
+      } else {
+        // Silently skip refresh - previous request still in progress
+      }
+    }, 60000); // 60 seconds instead of 30 seconds
 
     return () => clearInterval(interval);
   }, []);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = async (retryCount = 0) => {
     try {
-      const response = await fetch('/api/analytics');
+      const url = `${window.location.origin}/api/analytics`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        redirect: 'manual',
+        cache: 'no-store'
+      });
+      
       if (response.ok) {
         const data = await response.json();
         setAnalytics(data);
+      } else {
+        console.error('🔍 Analytics: Response not ok:', response.status, response.statusText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Failed to fetch analytics:', error);
+      console.error('🔍 Analytics: Fetch error:', error);
+      
+      // Retry logic for transient errors
+      if (retryCount < 2 && error instanceof Error && error.message.includes('Failed to fetch')) {
+        setTimeout(() => fetchAnalytics(retryCount + 1), 5000);
+        return;
+      }
     }
   };
 
-  const fetchRecentVisitors = async () => {
+  const fetchRecentVisitors = async (retryCount = 0) => {
     try {
-      const response = await fetch('/api/analytics?type=recent&limit=20');
+      const url = `${window.location.origin}/api/analytics?type=recent&limit=20`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        redirect: 'manual',
+        cache: 'no-store'
+      });
+      
       if (response.ok) {
         const data = await response.json();
         setRecentVisitors(data);
+      } else {
+        console.error('🔍 Recent Visitors: Response not ok:', response.status, response.statusText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Failed to fetch recent visitors:', error);
+      console.error('🔍 Recent Visitors: Fetch error:', error);
+      
+      // Retry logic for transient errors
+      if (retryCount < 2 && error instanceof Error && error.message.includes('Failed to fetch')) {
+        setTimeout(() => fetchRecentVisitors(retryCount + 1), 5000);
+        return;
+      }
     }
   };
 

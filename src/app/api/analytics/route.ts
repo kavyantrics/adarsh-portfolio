@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackVisitor, getAnalyticsStats, getRecentVisitors } from '@/lib/analytics';
 
-// Configure for static export
-export const dynamic = 'force-static';
-export const revalidate = false;
+// Ensure this route is dynamic and not prerendered
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function POST(req: NextRequest) {
   try {

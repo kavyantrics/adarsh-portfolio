@@ -21,26 +21,101 @@ const Dashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (retryCount = 0) => {
     try {
-      const response = await fetch('/api/dashboard');
-      if (!response.ok) throw new Error('Failed to fetch dashboard data');
-      const newData = await response.json();
-      setData(newData);
-      setError(null);
+      // Try with absolute URL and more explicit options
+      const url = `${window.location.origin}/api/dashboard`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        // Prevent any redirects
+        redirect: 'manual',
+        // Force fresh request
+        cache: 'no-store'
+      });
+      
+      if (response.ok) {
+        const newData = await response.json();
+        setData(newData);
+        setError(null);
+        setLastUpdated(new Date());
+      } else {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
     } catch (err) {
+      // Retry logic for transient errors
+      if (retryCount < 2 && err instanceof Error && err.message.includes('Failed to fetch')) {
+        setTimeout(() => fetchData(retryCount + 1), 5000);
+        return;
+      }
+      
       setError(err instanceof Error ? err.message : 'An error occurred');
+      
+      // Fallback to XMLHttpRequest if fetch fails completely
+      if (retryCount === 2) {
+        fetchDataXHR();
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const fetchDataXHR = () => {
+    try {
+      const xhr = new XMLHttpRequest();
+      const url = `${window.location.origin}/api/dashboard`;
+      
+      xhr.open('GET', url, true);
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Cache-Control', 'no-cache');
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              setData(data);
+              setError(null);
+            } catch (e) {
+              setError('Failed to parse XHR response');
+            }
+          } else {
+            setError(`XHR failed: ${xhr.status} ${xhr.statusText}`);
+          }
+        }
+      };
+      
+      xhr.onerror = function() {
+        setError(`XHR network error: ${xhr.statusText}`);
+      };
+      
+      xhr.send();
+    } catch (err) {
+      setError(`XHR error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
+  };
+
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000); // Update every 5 seconds
+    
+    // Smart polling with error handling
+    const interval = setInterval(() => {
+      // Only poll if there's no current error
+      if (!error) {
+        fetchData();
+      } else {
+        // Silently skip refresh due to error
+      }
+    }, 30000); // 30 seconds instead of 5 seconds
+    
     return () => clearInterval(interval);
-  }, []);
+  }, [error]); // Re-run effect if error changes
 
   const getStatusStyles = (status: string) => {
     switch (status.toLowerCase()) {
@@ -117,12 +192,17 @@ const Dashboard = () => {
             DevOps Dashboard
           </h2>
           <button
-            onClick={fetchData}
+            onClick={() => fetchData()}
             className="flex items-center gap-2 px-5 py-2.5 border border-accent text-accent rounded-lg hover:bg-accent hover:text-[#18181b] transition-all duration-300 text-sm font-medium shadow-sm hover:shadow-neon-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
           >
             <RefreshCw size={16} />
             Refresh
           </button>
+          {lastUpdated && (
+            <div className="text-xs text-gray-400">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
