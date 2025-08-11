@@ -1,27 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackVisitor, getAnalyticsStats, getRecentVisitors } from '@/lib/analytics';
 
+// Configure for static export
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function POST(req: NextRequest) {
   try {
     const { page, clientData } = await req.json();
     
-    // Track this visitor with enhanced client data
-    const visitor = trackVisitor(req, page || '/', clientData);
+    if (!page) {
+      return NextResponse.json({ error: 'Page parameter is required' }, { status: 400 });
+    }
+
+    const visitor = await trackVisitor(req, page, clientData);
     
-    return NextResponse.json({ 
-      success: true, 
-      visitorId: visitor.id,
-      timestamp: visitor.timestamp,
-      sessionId: visitor.sessionId,
-      isFirstVisit: visitor.isFirstVisit,
-      visitCount: visitor.visitCount
+    return NextResponse.json({
+      success: true,
+      visitor: {
+        id: visitor.id,
+        sessionId: visitor.sessionId,
+        isFirstVisit: visitor.isFirstVisit,
+        visitCount: visitor.visitCount
+      }
     });
   } catch (error) {
-    console.error('Analytics tracking error:', error);
-    return NextResponse.json(
-      { error: 'Failed to track visitor' },
-      { status: 500 }
-    );
+    console.error('Analytics POST error:', error);
+    return NextResponse.json({ error: 'Failed to track visitor' }, { status: 500 });
   }
 }
 
@@ -31,20 +36,15 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type');
     
     if (type === 'recent') {
-      const limit = parseInt(searchParams.get('limit') || '10');
-      const recentVisitors = getRecentVisitors(limit);
+      const limit = parseInt(searchParams.get('limit') || '20');
+      const recentVisitors = await getRecentVisitors(limit);
       return NextResponse.json(recentVisitors);
     }
     
-    // Get analytics statistics
-    const stats = getAnalyticsStats();
-    
+    const stats = await getAnalyticsStats();
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Analytics retrieval error:', error);
-    return NextResponse.json(
-      { error: 'Failed to retrieve analytics' },
-      { status: 500 }
-    );
+    console.error('Analytics GET error:', error);
+    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
   }
 }

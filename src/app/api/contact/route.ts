@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+// Configure for static export
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 // Validate environment variables
 const validateEnv = () => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {

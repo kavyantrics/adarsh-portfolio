@@ -6,6 +6,10 @@ import {
   mockLogs,
 } from '@/data/dashboard';
 
+// Configure for static export
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 // Simulate real-time updates by slightly modifying the mock data
 function getUpdatedMetrics() {
   return {

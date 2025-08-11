@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+// Configure for static export
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
