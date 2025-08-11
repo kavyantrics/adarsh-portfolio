@@ -1,21 +1,3 @@
-import createMDX from '@next/mdx';
-import remarkGfm from 'remark-gfm';
-import rehypePrettyCode from 'rehype-pretty-code';
-
-const withMDX = createMDX({
-  options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      [
-        rehypePrettyCode,
-        {
-          theme: 'github-dark',
-        },
-      ],
-    ],
-  },
-});
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -38,6 +20,10 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  // Add output configuration for static export
+  output: 'export',
+  trailingSlash: true,
+  distDir: 'out',
 };
 
-export default withMDX(nextConfig); 
+export default nextConfig; 
