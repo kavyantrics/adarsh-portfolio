@@ -5,9 +5,14 @@ import OpenAI from 'openai';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client only if API key is available
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+  return new OpenAI({ apiKey });
+};
 
 // System prompt that includes your skills, experience, and blog content
 const systemPrompt = `You are a helpful AI assistant representing Adarsh, a Full Stack Developer & Designer. 
@@ -31,6 +36,15 @@ Please provide accurate and helpful responses based on this information. If you'
 
 export async function POST(req: Request) {
   try {
+    const openai = getOpenAIClient();
+    
+    if (!openai) {
+      return NextResponse.json(
+        { message: 'AI chat is currently unavailable. Please check back later.' },
+        { status: 503 }
+      );
+    }
+
     const { messages } = await req.json();
 
     const completion = await openai.chat.completions.create({

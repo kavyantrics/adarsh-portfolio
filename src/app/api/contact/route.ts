@@ -42,6 +42,14 @@ const isValidEmail = (email: string) => {
 
 export async function POST(request: Request) {
   try {
+    // Check if email configuration is available
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      return NextResponse.json(
+        { error: 'Contact form is currently unavailable. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
     const { name, email, message } = await request.json();
 
     // Enhanced input validation
