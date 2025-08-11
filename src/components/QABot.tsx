@@ -11,8 +11,13 @@ interface Message {
 
 export default function QABot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: "Hey there! 👋 I'm Adarsh's personal AI sidekick. Ready to chat about tech, projects, or just shoot the breeze? What's on your mind?"
+    }
+  ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -71,12 +76,12 @@ export default function QABot() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 bg-accent text-[#18181b] p-4 rounded-full shadow-neon-sm hover:bg-accent/90 hover:shadow-neon-md focus:outline-none focus:ring-2 focus:ring-accent/50 ring-offset-2 ring-offset-[#18181b] z-[1000]"
+        className="fixed bottom-8 right-8 bg-white text-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent/50 ring-offset-2 ring-offset-background z-[1000] border border-gray-200"
         aria-label="Toggle Chatbot"
       >
-        <MessageSquare className="w-6 h-6" />
+        <MessageSquare className="w-6 h-6 text-gray-800" />
       </motion.button>
-
+      
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -84,11 +89,11 @@ export default function QABot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed bottom-28 right-8 w-[380px] h-[calc(100vh-10rem)] max-h-[650px] bg-[#222225]/80 backdrop-blur-md border border-accent/30 rounded-xl shadow-neon-lg flex flex-col z-[1000] font-mono overflow-hidden"
+            className="fixed bottom-28 right-8 w-[320px] h-[500px] max-h-[500px] bg-[#222225]/80 backdrop-blur-md border border-accent/30 rounded-xl shadow-neon-lg flex flex-col z-[1000] font-mono overflow-hidden"
           >
             <div className="p-4 border-b border-accent/20 flex justify-between items-center bg-[#27272a]/90">
               <h3 className="font-semibold text-lg text-accent flex items-center">
-                <Bot size={20} className="mr-2.5" /> AI Assistant
+                <Bot size={20} className="mr-2.5" /> Adarsh's Assistant
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
@@ -118,15 +123,15 @@ export default function QABot() {
                   <div
                     className={`max-w-[80%] rounded-xl p-3 text-sm shadow-md ${
                       message.role === 'user'
-                        ? 'bg-accent text-[#18181b] rounded-br-none'
-                        : 'bg-[#2c2c30] text-gray-200 rounded-bl-none border border-gray-700/50'
+                        ? 'bg-[#2c2c30] text-white rounded-br-none border border-gray-700/50'
+                        : 'bg-[#2c2c30] text-white rounded-bl-none border border-gray-700/50'
                     }`}
                   >
                     {message.content}
                   </div>
                   {message.role === 'user' && (
-                    <div className="w-8 h-8 rounded-full bg-gray-700/50 flex items-center justify-center flex-shrink-0 border border-gray-600/50 shadow-sm">
-                      <User className="w-4 h-4 text-gray-300" />
+                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 border border-blue-400/40 shadow-sm">
+                      <User className="w-4 h-4 text-blue-400" />
                     </div>
                   )}
                 </motion.div>

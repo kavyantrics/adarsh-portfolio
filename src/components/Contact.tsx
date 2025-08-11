@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Mail, MapPin, Github, Linkedin } from 'lucide-react';
+import { Send, Mail, MapPin, Github, Linkedin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -11,10 +12,27 @@ export default function Contact() {
     message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateForm = () => {
+    if (!formData.name.trim()) return 'Name is required';
+    if (!formData.email.trim()) return 'Email is required';
+    if (!formData.email.includes('@')) return 'Please enter a valid email';
+    if (formData.message.trim().length < 10) return 'Message must be at least 10 characters';
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
+    setErrorMessage('');
+
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      setStatus('error');
+      return;
+    }
 
     try {
       const response = await fetch('/api/contact', {
@@ -25,14 +43,20 @@ export default function Contact() {
         body: JSON.stringify(formData),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        throw new Error(data.error || 'Failed to send message');
       }
 
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
+      
+      // Auto-reset success message after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
       console.error('Error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
       setStatus('error');
     }
   };
@@ -40,6 +64,12 @@ export default function Contact() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (status === 'error') {
+      setStatus('idle');
+      setErrorMessage('');
+    }
   };
 
   return (
@@ -62,7 +92,7 @@ export default function Contact() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-300">
-                  Name
+                  Name *
                 </label>
                 <input
                   type="text"
@@ -71,13 +101,13 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono"
+                  className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono transition-all duration-200"
                   placeholder="Your Name"
                 />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
-                  Email Address
+                  Email Address *
                 </label>
                 <input
                   type="email"
@@ -86,7 +116,7 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono"
+                  className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono transition-all duration-200"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -94,7 +124,7 @@ export default function Contact() {
 
             <div>
               <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-300">
-                Message
+                Message *
               </label>
               <textarea
                 id="message"
@@ -103,9 +133,12 @@ export default function Contact() {
                 onChange={handleChange}
                 required
                 rows={5}
-                className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono resize-none"
-                placeholder="How can I help you today?"
+                className="w-full px-4 py-3 rounded-md border border-gray-600 bg-[#1e1e21] text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent placeholder-gray-500 font-mono resize-none transition-all duration-200"
+                placeholder="How can I help you today? (Minimum 10 characters)"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                {formData.message.length}/500 characters
+              </p>
             </div>
 
             <div className="flex justify-center pt-2">
@@ -120,30 +153,51 @@ export default function Contact() {
                     : 'bg-accent text-white border-white hover:bg-accent/90 hover:shadow-neon-md shadow-neon-sm'
                 }`}
               >
-                <Send size={18} />
-                {status === 'loading' ? 'Sending...' : status === 'success' ? 'Message Sent!' : 'Send Message'}
+                {status === 'loading' ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : status === 'success' ? (
+                  <>
+                    <CheckCircle size={18} />
+                    Message Sent!
+                  </>
+                ) : (
+                  <>
+                    <Send size={18} />
+                    Send Message
+                  </>
+                )}
               </motion.button>
             </div>
 
-            {status === 'success' && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center text-green-400 pt-2"
-              >
-                Thank you! Your message has been sent successfully. I&apos;ll get back to you soon.
-              </motion.p>
-            )}
+            {/* Status Messages */}
+            <AnimatePresence>
+              {status === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="flex items-center justify-center gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400"
+                >
+                  <CheckCircle size={20} />
+                  <span>Thank you! Your message has been sent successfully. I&apos;ll get back to you within 24 hours.</span>
+                </motion.div>
+              )}
 
-            {status === 'error' && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center text-red-400 pt-2"
-              >
-                Oops! Something went wrong. Please try again later or contact me directly.
-              </motion.p>
-            )}
+              {status === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="flex items-center justify-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400"
+                >
+                  <AlertCircle size={20} />
+                  <span>{errorMessage}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </form>
 
           <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">

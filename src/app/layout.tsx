@@ -15,14 +15,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body 
-        className="antialiased font-mono bg-[#18181b] text-gray-300"
+        className="antialiased font-mono bg-background text-text transition-colors duration-300"
         suppressHydrationWarning={true}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange
+          disableTransitionOnChange={false}
         >
           {children}
         </ThemeProvider>

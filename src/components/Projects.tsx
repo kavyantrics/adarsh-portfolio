@@ -39,7 +39,7 @@ const Projects = ({ projects }: ProjectsProps) => {
   }, [activeFilter, projects])
   
   return (
-    <div className="container mx-auto py-12 font-mono">
+    <section id="projects" className="container mx-auto py-12 font-mono">
 
        <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -129,7 +129,7 @@ const Projects = ({ projects }: ProjectsProps) => {
           <Github size={18} className="ml-2.5" />
         </a>
       </motion.div>
-    </div>
+    </section>
   )
 }
 

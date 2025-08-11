@@ -6,12 +6,18 @@
 @import '@fontsource/jetbrains-mono/400.css';
 
 :root {
-  /* Digital Garden Theme Colors */
+  /* Light Mode Colors */
   --primary: #3A0CA3;
   --secondary: #4CC9F0;
   --accent: #F72585;
-  --background: #0B090A;
-  --foreground: #F8F9FA;
+  --background: #ffffff;
+  --foreground: #1f2937;
+  --card: #f8f9fa;
+  --border: #e5e7eb;
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --accent-foreground: #0a0a0a;
+  --muted-foreground: #6b7280;
   
   /* Typography */
   --font-heading: 'Space Grotesk', sans-serif;
@@ -19,31 +25,74 @@
   --font-code: 'JetBrains Mono', monospace;
 }
 
+.dark {
+  /* Dark Mode Colors */
+  --primary: #3A0CA3;
+  --secondary: #4CC9F0;
+  --accent: #F72585;
+  --background: #0B090A;
+  --foreground: #F8F9FA;
+  --card: #18181b;
+  --border: #222;
+  --text: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --accent-foreground: #ffffff;
+  --muted-foreground: #e0e0e0;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-body);
   --font-mono: var(--font-code);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #F8F9FA;
-    --foreground: #0B090A;
-  }
+/* Smooth scrolling for navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text);
   font-family: var(--font-body);
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
+  color: var(--text);
 }
 
 code, pre {
   font-family: var(--font-code);
+}
+
+/* Scrollbar styling for both themes */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
