@@ -193,7 +193,7 @@ export async function trackPageView(path: string): Promise<void> {
 }
 
 // Track visitor
-export async function trackVisitor(country?: string, device?: 'desktop' | 'mobile' | 'tablet'): Promise<void> {
+export async function trackVisitor(country?: string, device?: 'desktop' | 'mobile' | 'tablet', ip?: string): Promise<void> {
   try {
     const analytics = await loadAnalytics();
     
@@ -210,6 +210,11 @@ export async function trackVisitor(country?: string, device?: 'desktop' | 'mobil
     // Track device
     if (device && analytics.visitors.devices[device] !== undefined) {
       analytics.visitors.devices[device]++;
+    }
+    
+    // Track IP (for debugging purposes)
+    if (ip && ip !== 'unknown') {
+      console.log(`Visitor tracked from IP: ${ip}`);
     }
     
     analytics.visitors.unique++;

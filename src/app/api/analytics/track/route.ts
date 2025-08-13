@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackPageView, trackVisitor, trackPerformance } from '@/lib/services';
+import { detectUserIP } from '@/lib/utils/ipDetection';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +15,8 @@ export async function POST(request: NextRequest) {
         break;
         
       case 'visitor':
-        trackVisitor(data.country, data.device);
+        const ipResult = detectUserIP(request.headers);
+        trackVisitor(data.country, data.device, ipResult.ip);
         break;
         
       case 'performance':

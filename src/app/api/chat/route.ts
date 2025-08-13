@@ -4,6 +4,7 @@ import {
   storeChatMessage, 
   generateConversationId
 } from '@/lib/services';
+import { detectUserIP, getIPDebugInfo } from '@/lib/utils/ipDetection';
 
 // Configure for static export
 export const dynamic = 'force-static';
@@ -49,10 +50,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get user IP address
-    const forwarded = req.headers.get('x-forwarded-for');
-    const realIP = req.headers.get('x-real-ip');
-    const userIP = forwarded?.split(',')[0] || realIP || 'unknown';
+    // Get user IP address using improved detection utility
+    const ipResult = detectUserIP(req.headers);
+    const userIP = ipResult.ip;
+    
+    // Debug logging (remove in production)
+    console.log('IP Detection Debug:', {
+      result: ipResult,
+      headers: getIPDebugInfo(req.headers)
+    });
 
     const { messages, conversation_id: existingConversationId } = await req.json();
 
