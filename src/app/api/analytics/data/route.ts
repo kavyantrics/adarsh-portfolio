@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAnalyticsSummary, getAnalyticsForPeriod } from '@/lib/analytics';
+import { getAnalyticsSummary, getAnalyticsForPeriod } from '@/lib/supabaseAnalytics';
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,10 +9,10 @@ export async function GET(request: NextRequest) {
     let analyticsData;
     
     if (period === 'summary') {
-      analyticsData = getAnalyticsSummary();
+      analyticsData = await getAnalyticsSummary();
     } else {
       const days = period ? parseInt(period) : 30;
-      analyticsData = getAnalyticsForPeriod(days);
+      analyticsData = await getAnalyticsForPeriod(days);
     }
     
     return NextResponse.json(analyticsData);

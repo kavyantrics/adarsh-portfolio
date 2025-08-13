@@ -9,7 +9,8 @@
     "lint": "next lint",
     "export": "next build",
     "deploy": "next build && next start -p 3000",
-    "init-analytics": "node scripts/init-analytics.js"
+    "migrate-supabase": "node scripts/migrate-to-supabase.js",
+    "test-supabase": "node scripts/test-supabase.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.5",
@@ -21,10 +22,12 @@
     "@react-pdf/renderer": "^4.3.0",
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
+    "@supabase/supabase-js": "^2.55.0",
     "@types/mdx": "^2.0.13",
     "@types/nodemailer": "^6.4.17",
     "chart.js": "^4.4.9",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
     "framer-motion": "^12.11.3",
     "lucide-react": "^0.510.0",
     "next": "15.3.2",

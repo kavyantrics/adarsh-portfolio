@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { trackPageView, trackVisitor, trackPerformance } from '@/lib/analytics';
+import { trackPageView, trackVisitor, trackPerformance } from '@/lib/supabaseAnalytics';
 
 export async function POST(request: NextRequest) {
   try {
