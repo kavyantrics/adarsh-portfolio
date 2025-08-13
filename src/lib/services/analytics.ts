@@ -134,17 +134,39 @@ export async function loadAnalytics(): Promise<AnalyticsData> {
 // Save analytics data to Supabase
 export async function saveAnalytics(data: AnalyticsData): Promise<void> {
   try {
+    // First, try to get existing analytics record
+    const { data: existingData, error: selectError } = await supabase
+      .from('analytics')
+      .select('id')
+      .limit(1);
+
+    if (selectError) throw selectError;
+
+    const upsertData: {
+      page_views: Record<string, number>;
+      visitors: Record<string, unknown>;
+      blog_stats: Record<string, unknown>;
+      performance: Record<string, unknown>;
+      last_updated: string;
+      last_reset: string;
+      id?: string;
+    } = {
+      page_views: data.pageViews,
+      visitors: data.visitors,
+      blog_stats: data.blogStats,
+      performance: data.performance,
+      last_updated: new Date().toISOString(),
+      last_reset: data.lastReset,
+    };
+
+    // If we have existing data, use its ID for upsert
+    if (existingData && existingData.length > 0) {
+      upsertData.id = existingData[0].id;
+    }
+
     const { error } = await supabase
       .from('analytics')
-      .upsert([{
-        id: '1', // Single analytics record
-        page_views: data.pageViews,
-        visitors: data.visitors,
-        blog_stats: data.blogStats,
-        performance: data.performance,
-        last_updated: new Date().toISOString(),
-        last_reset: data.lastReset,
-      }]);
+      .upsert([upsertData]);
 
     if (error) throw error;
   } catch (error) {
