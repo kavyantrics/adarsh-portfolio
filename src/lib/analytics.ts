@@ -1,315 +1,271 @@
-import { NextRequest } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
-export interface UserDetails {
-  // Basic visitor info
-  id: string;
-  timestamp: Date;
-  ip: string;
-  userAgent: string;
-  page: string;
-  referrer?: string;
-  
-  // Device & Browser details
-  deviceType: 'desktop' | 'mobile' | 'tablet';
-  browser: string;
-  browserVersion: string;
-  os: string;
-  osVersion: string;
-  screenResolution: string;
-  viewportSize: string;
-  colorDepth: number;
-  language: string;
-  timezone: string;
-  
-  // Network & Performance
-  connectionType?: string;
-  effectiveType?: string;
-  downlink?: number;
-  rtt?: number;
-  
-  // Location (if available)
-  country?: string;
-  city?: string;
-  region?: string;
-  
-  // Session info
-  sessionId: string;
-  isFirstVisit: boolean;
-  visitCount: number;
-  
-  // Additional context
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  utmTerm?: string;
-  utmContent?: string;
-}
-
-export interface AnalyticsStats {
-  totalVisitors: number;
-  pageViews: number;
-  uniqueVisitors: number;
-  lastVisit: string;
-  todayVisitors: number;
-  thisWeekVisitors: number;
-  thisMonthVisitors: number;
-  
-  // Enhanced stats
-  deviceBreakdown: {
-    desktop: number;
-    mobile: number;
-    tablet: number;
+// Analytics data structure
+export interface AnalyticsData {
+  pageViews: {
+    [path: string]: number;
   };
-  browserBreakdown: Record<string, number>;
-  osBreakdown: Record<string, number>;
-  countryBreakdown: Record<string, number>;
-  referrerBreakdown: Record<string, number>;
-}
-
-// In-memory storage (replace with database in production)
-let visitorData: UserDetails[] = [];
-const uniqueIPs = new Set<string>();
-const uniqueSessions = new Set<string>();
-
-export const trackVisitor = (req: NextRequest, page: string = '/', clientData?: Partial<UserDetails>) => {
-  const forwarded = req.headers.get('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
-  const userAgent = req.headers.get('user-agent') || 'unknown';
-  const referrer = req.headers.get('referer') || undefined;
-  const acceptLanguage = req.headers.get('accept-language') || 'en-US';
-  
-  // Parse user agent for device/browser info
-  const ua = userAgent.toLowerCase();
-  const deviceType = getDeviceType(ua);
-  const browser = getBrowser(ua);
-  const browserVersion = getBrowserVersion(ua);
-  const os = getOS(ua);
-  const osVersion = getOSVersion(ua);
-  
-  // Generate session ID
-  const sessionId = generateSessionId(ip, userAgent);
-  const isFirstVisit = !uniqueSessions.has(sessionId);
-  
-  // Count visits for this session
-  const visitCount = visitorData.filter(v => v.sessionId === sessionId).length + 1;
-  
-  // Parse UTM parameters from referrer
-  const utmParams = parseUTMParams(referrer);
-  
-  const visitor: UserDetails = {
-    id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    timestamp: new Date(),
-    ip,
-    userAgent,
-    page,
-    referrer,
-    
-    // Device & Browser
-    deviceType,
-    browser,
-    browserVersion,
-    os,
-    osVersion,
-    screenResolution: clientData?.screenResolution || 'unknown',
-    viewportSize: clientData?.viewportSize || 'unknown',
-    colorDepth: clientData?.colorDepth || 24,
-    language: acceptLanguage.split(',')[0],
-    timezone: clientData?.timezone || 'unknown',
-    
-    // Network info
-    connectionType: clientData?.connectionType,
-    effectiveType: clientData?.effectiveType,
-    downlink: clientData?.downlink,
-    rtt: clientData?.rtt,
-    
-    // Location
-    country: clientData?.country,
-    city: clientData?.city,
-    region: clientData?.region,
-    
-    // Session
-    sessionId,
-    isFirstVisit,
-    visitCount,
-    
-    // UTM parameters
-    ...utmParams,
-  };
-
-  // Add to storage
-  visitorData.push(visitor);
-  uniqueIPs.add(ip);
-  uniqueSessions.add(sessionId);
-
-  // Clean old data (keep last 30 days)
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  visitorData = visitorData.filter(v => v.timestamp > thirtyDaysAgo);
-
-  // Log detailed visitor info
-  console.log('🚀 New Visitor:', {
-    id: visitor.id,
-    ip: visitor.ip,
-    device: `${visitor.deviceType} - ${visitor.os} ${visitor.osVersion}`,
-    browser: `${visitor.browser} ${visitor.browserVersion}`,
-    page: visitor.page,
-    referrer: visitor.referrer || 'Direct',
-    location: visitor.country ? `${visitor.city}, ${visitor.country}` : 'Unknown',
-    session: `${visitor.sessionId.slice(0, 8)}... (Visit #${visitor.visitCount})`,
-    timestamp: visitor.timestamp.toISOString(),
-  });
-
-  return visitor;
-};
-
-export const getAnalyticsStats = (): AnalyticsStats => {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-
-  const todayVisitors = visitorData.filter(v => v.timestamp >= today).length;
-  const thisWeekVisitors = visitorData.filter(v => v.timestamp >= weekAgo).length;
-  const thisMonthVisitors = visitorData.filter(v => v.timestamp >= monthAgo).length;
-
-  // Device breakdown
-  const deviceBreakdown = {
-    desktop: visitorData.filter(v => v.deviceType === 'desktop').length,
-    mobile: visitorData.filter(v => v.deviceType === 'mobile').length,
-    tablet: visitorData.filter(v => v.deviceType === 'tablet').length,
-  };
-
-  // Browser breakdown
-  const browserBreakdown = visitorData.reduce((acc, v) => {
-    acc[v.browser] = (acc[v.browser] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  // OS breakdown
-  const osBreakdown = visitorData.reduce((acc, v) => {
-    acc[v.os] = (acc[v.os] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Country breakdown
-  const countryBreakdown = visitorData
-    .filter(v => v.country)
-    .reduce((acc, v) => {
-      acc[v.country!] = (acc[v.country!] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-  // Referrer breakdown
-  const referrerBreakdown = visitorData
-    .filter(v => v.referrer)
-    .reduce((acc, v) => {
-      const host = new URL(v.referrer!).hostname;
-      acc[host] = (acc[host] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-  return {
-    totalVisitors: visitorData.length,
-    pageViews: visitorData.length,
-    uniqueVisitors: uniqueIPs.size,
-    lastVisit: visitorData.length > 0 ? visitorData[visitorData.length - 1].timestamp.toISOString() : now.toISOString(),
-    todayVisitors,
-    thisWeekVisitors,
-    thisMonthVisitors,
-    
-    // Enhanced breakdowns
-    deviceBreakdown,
-    browserBreakdown,
-    osBreakdown,
-    countryBreakdown,
-    referrerBreakdown,
-  };
-};
-
-export const getPageAnalytics = (page: string) => {
-  return visitorData.filter(v => v.page === page).length;
-};
-
-export const getReferrerAnalytics = () => {
-  const referrers = visitorData
-    .filter(v => v.referrer)
-    .map(v => new URL(v.referrer!).hostname);
-  
-  const referrerCounts = referrers.reduce((acc, host) => {
-    acc[host] = (acc[host] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  return Object.entries(referrerCounts)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 10);
-};
-
-export const getRecentVisitors = (limit: number = 10) => {
-  return visitorData
-    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-    .slice(0, limit);
-};
-
-// Helper functions
-const getDeviceType = (userAgent: string): 'desktop' | 'mobile' | 'tablet' => {
-  if (/tablet|ipad|playbook|silk/i.test(userAgent)) return 'tablet';
-  if (/mobile|android|iphone|ipod|blackberry|opera mini|iemobile/i.test(userAgent)) return 'mobile';
-  return 'desktop';
-};
-
-const getBrowser = (userAgent: string): string => {
-  if (userAgent.includes('chrome')) return 'Chrome';
-  if (userAgent.includes('firefox')) return 'Firefox';
-  if (userAgent.includes('safari') && !userAgent.includes('chrome')) return 'Safari';
-  if (userAgent.includes('edge')) return 'Edge';
-  if (userAgent.includes('opera')) return 'Opera';
-  return 'Unknown';
-};
-
-const getBrowserVersion = (userAgent: string): string => {
-  const match = userAgent.match(/(chrome|firefox|safari|edge|opera)\/?\s*(\d+)/i);
-  return match ? match[2] : 'Unknown';
-};
-
-const getOS = (userAgent: string): string => {
-  if (userAgent.includes('windows')) return 'Windows';
-  if (userAgent.includes('mac')) return 'macOS';
-  if (userAgent.includes('linux')) return 'Linux';
-  if (userAgent.includes('android')) return 'Android';
-  if (userAgent.includes('ios')) return 'iOS';
-  return 'Unknown';
-};
-
-const getOSVersion = (userAgent: string): string => {
-  const match = userAgent.match(/(windows nt|mac os x|android|ios)\s*([\d._]+)/i);
-  return match ? match[2] : 'Unknown';
-};
-
-const generateSessionId = (ip: string, userAgent: string): string => {
-  const hash = btoa(`${ip}-${userAgent}`).replace(/[^a-zA-Z0-9]/g, '');
-  return hash.slice(0, 16);
-};
-
-const parseUTMParams = (referrer?: string): {
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  utmTerm?: string;
-  utmContent?: string;
-} => {
-  if (!referrer) return {};
-  
-  try {
-    const url = new URL(referrer);
-    return {
-      utmSource: url.searchParams.get('utm_source') || undefined,
-      utmMedium: url.searchParams.get('utm_medium') || undefined,
-      utmCampaign: url.searchParams.get('utm_campaign') || undefined,
-      utmTerm: url.searchParams.get('utm_term') || undefined,
-      utmContent: url.searchParams.get('utm_content') || undefined,
+  visitors: {
+    total: number;
+    unique: number;
+    returning: number;
+    countries: {
+      [country: string]: number;
     };
-  } catch {
-    return {};
-  }
+    devices: {
+      desktop: number;
+      mobile: number;
+      tablet: number;
+    };
+  };
+  blogStats: {
+    totalPosts: number;
+    totalViews: number;
+    popularPosts: {
+      [slug: string]: number;
+    };
+  };
+  performance: {
+    averageLoadTime: number;
+    totalRequests: number;
+    errors: number;
+  };
+  lastUpdated: string;
+  lastReset: string;
+}
+
+// Default analytics data
+const defaultAnalytics: AnalyticsData = {
+  pageViews: {
+    '/': 0,
+    '/blog': 0,
+    '/projects': 0,
+  },
+  visitors: {
+    total: 0,
+    unique: 0,
+    returning: 0,
+    countries: {
+      'Unknown': 0,
+    },
+    devices: {
+      desktop: 0,
+      mobile: 0,
+      tablet: 0,
+    },
+  },
+  blogStats: {
+    totalPosts: 0,
+    totalViews: 0,
+    popularPosts: {},
+  },
+  performance: {
+    averageLoadTime: 0,
+    totalRequests: 0,
+    errors: 0,
+  },
+  lastUpdated: new Date().toISOString(),
+  lastReset: new Date().toISOString(),
 };
+
+// File paths
+const ANALYTICS_DIR = path.join(process.cwd(), 'data', 'analytics');
+const ANALYTICS_FILE = path.join(ANALYTICS_DIR, 'analytics.json');
+const BACKUP_DIR = path.join(ANALYTICS_DIR, 'backups');
+
+// Ensure directories exist
+function ensureDirectories() {
+  if (!fs.existsSync(ANALYTICS_DIR)) {
+    fs.mkdirSync(ANALYTICS_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(BACKUP_DIR)) {
+    fs.mkdirSync(BACKUP_DIR, { recursive: true });
+  }
+}
+
+// Load analytics data
+export function loadAnalytics(): AnalyticsData {
+  try {
+    ensureDirectories();
+    
+    if (!fs.existsSync(ANALYTICS_FILE)) {
+      // Create default analytics file
+      saveAnalytics(defaultAnalytics);
+      return defaultAnalytics;
+    }
+    
+    const data = fs.readFileSync(ANALYTICS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error loading analytics:', error);
+    return defaultAnalytics;
+  }
+}
+
+// Save analytics data
+export function saveAnalytics(data: AnalyticsData): void {
+  try {
+    ensureDirectories();
+    
+    // Create backup before saving
+    if (fs.existsSync(ANALYTICS_FILE)) {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const backupFile = path.join(BACKUP_DIR, `analytics-${timestamp}.json`);
+      fs.copyFileSync(ANALYTICS_FILE, backupFile);
+      
+      // Keep only last 10 backups
+      const backups = fs.readdirSync(BACKUP_DIR)
+        .filter(file => file.startsWith('analytics-'))
+        .sort()
+        .reverse()
+        .slice(10);
+      
+      backups.forEach(backup => {
+        fs.unlinkSync(path.join(BACKUP_DIR, backup));
+      });
+    }
+    
+    // Update timestamp and save
+    data.lastUpdated = new Date().toISOString();
+    fs.writeFileSync(ANALYTICS_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error('Error saving analytics:', error);
+  }
+}
+
+// Track page view
+export function trackPageView(path: string): void {
+  const analytics = loadAnalytics();
+  
+  if (!analytics.pageViews[path]) {
+    analytics.pageViews[path] = 0;
+  }
+  analytics.pageViews[path]++;
+  
+  analytics.visitors.total++;
+  
+  saveAnalytics(analytics);
+}
+
+// Track visitor
+export function trackVisitor(country?: string, device?: 'desktop' | 'mobile' | 'tablet'): void {
+  const analytics = loadAnalytics();
+  
+  // Track country
+  if (country) {
+    if (!analytics.visitors.countries[country]) {
+      analytics.visitors.countries[country] = 0;
+    }
+    analytics.visitors.countries[country]++;
+  } else {
+    analytics.visitors.countries['Unknown']++;
+  }
+  
+  // Track device
+  if (device && analytics.visitors.devices[device] !== undefined) {
+    analytics.visitors.devices[device]++;
+  }
+  
+  analytics.visitors.unique++;
+  
+  saveAnalytics(analytics);
+}
+
+// Track blog post view
+export function trackBlogView(slug: string): void {
+  const analytics = loadAnalytics();
+  
+  if (!analytics.blogStats.popularPosts[slug]) {
+    analytics.blogStats.popularPosts[slug] = 0;
+  }
+  analytics.blogStats.popularPosts[slug]++;
+  analytics.blogStats.totalViews++;
+  
+  saveAnalytics(analytics);
+}
+
+// Track performance metrics
+export function trackPerformance(loadTime: number, hasError: boolean = false): void {
+  const analytics = loadAnalytics();
+  
+  // Update average load time
+  const currentAvg = analytics.performance.averageLoadTime;
+  const totalRequests = analytics.performance.totalRequests;
+  analytics.performance.averageLoadTime = 
+    (currentAvg * totalRequests + loadTime) / (totalRequests + 1);
+  
+  analytics.performance.totalRequests++;
+  
+  if (hasError) {
+    analytics.performance.errors++;
+  }
+  
+  saveAnalytics(analytics);
+}
+
+// Get analytics summary
+export function getAnalyticsSummary(): {
+  totalPageViews: number;
+  totalVisitors: number;
+  topPages: Array<{ path: string; views: number }>;
+  topCountries: Array<{ country: string; visitors: number }>;
+  deviceStats: { desktop: number; mobile: number; tablet: number };
+  performance: { avgLoadTime: number; totalRequests: number; errors: number };
+} {
+  const analytics = loadAnalytics();
+  
+  const totalPageViews = Object.values(analytics.pageViews).reduce((sum, views) => sum + views, 0);
+  
+  const topPages = Object.entries(analytics.pageViews)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([path, views]) => ({ path, views }));
+  
+  const topCountries = Object.entries(analytics.visitors.countries)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([country, visitors]) => ({ country, visitors }));
+  
+  return {
+    totalPageViews,
+    totalVisitors: analytics.visitors.total,
+    topPages,
+    topCountries,
+    deviceStats: analytics.visitors.devices,
+    performance: {
+      avgLoadTime: Math.round(analytics.performance.averageLoadTime),
+      totalRequests: analytics.performance.totalRequests,
+      errors: analytics.performance.errors,
+    },
+  };
+}
+
+// Reset analytics (for testing or monthly reset)
+export function resetAnalytics(): void {
+  const analytics = loadAnalytics();
+  analytics.lastReset = new Date().toISOString();
+  
+  // Reset counters but keep structure
+  analytics.pageViews = Object.fromEntries(
+    Object.keys(analytics.pageViews).map(key => [key, 0])
+  );
+  analytics.visitors.total = 0;
+  analytics.visitors.unique = 0;
+  analytics.visitors.returning = 0;
+  analytics.visitors.countries = { 'Unknown': 0 };
+  analytics.visitors.devices = { desktop: 0, mobile: 0, tablet: 0 };
+  analytics.blogStats.totalViews = 0;
+  analytics.blogStats.popularPosts = {};
+  analytics.performance.totalRequests = 0;
+  analytics.performance.errors = 0;
+  
+  saveAnalytics(analytics);
+}
+
+// Get analytics for specific time period (basic implementation)
+export function getAnalyticsForPeriod(): AnalyticsData {
+  // For now, return all data
+  // In the future, you could implement date-based filtering
+  return loadAnalytics();
+}

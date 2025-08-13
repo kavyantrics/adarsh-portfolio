@@ -29,7 +29,7 @@ export default function PerformanceMetrics() {
   });
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+  const [isHidden, setIsHidden] = useState(true);
 
   const updateMetrics = async () => {
     try {
@@ -55,8 +55,12 @@ export default function PerformanceMetrics() {
   useEffect(() => {
     // Check localStorage for saved preference
     const savedState = localStorage.getItem('performanceMetricsHidden');
-    if (savedState) {
+    if (savedState !== null) {
       setIsHidden(savedState === 'true');
+    } else {
+      // Default to hidden if no preference is saved
+      setIsHidden(true);
+      localStorage.setItem('performanceMetricsHidden', 'true');
     }
 
     // Get initial metrics
@@ -138,10 +142,10 @@ export default function PerformanceMetrics() {
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         onClick={toggleVisibility}
-        className="fixed top-4 right-4 z-50 bg-card/20 hover:bg-card/30 text-accent p-3 rounded-lg border border-accent/30 shadow-neon-sm transition-all duration-200 hover:scale-105"
+        className="fixed top-2 right-4 md:top-3 md:right-6 z-50 bg-card/20 hover:bg-card/30 text-accent p-2 rounded-lg border border-accent/30 transition-all duration-200 hover:scale-105"
         title="Show Performance Metrics"
       >
-        <Eye size={20} />
+        <Eye size={16} />
       </motion.button>
     );
   }

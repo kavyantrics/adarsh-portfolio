@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "export": "next build",
-    "deploy": "next build && next start -p 3000"
+    "deploy": "next build && next start -p 3000",
+    "init-analytics": "node scripts/init-analytics.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.5",

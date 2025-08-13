@@ -1,27 +1,21 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
+
 import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
-  title: "Adarsh Portfolio | Digital Garden",
-  description: "Personal portfolio showcasing projects and skills",
+  title: 'Adarsh Portfolio - Full Stack Developer & DevOps Engineer',
+  description: 'Full Stack Developer and DevOps Engineer with expertise in React, Node.js, AWS, Docker, and modern web technologies.',
   icons: {
-    icon: [
-      {
-        url: '/logo.jpg',
-        type: 'image/jpeg',
-        sizes: '32x32',
-      }
-    ],
-    shortcut: '/logo.jpg',
-    apple: '/logo.jpg',
+    icon: '/logo.jpg',
   },
 };
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -39,10 +33,11 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange={false}
-        >
+        > 
+         <AnalyticsTracker />
           {children}
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
