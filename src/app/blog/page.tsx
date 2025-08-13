@@ -12,6 +12,14 @@ interface BlogPost {
   image: string | undefined;
 }
 
+function isValidImagePath(imagePath: string): boolean {
+  if (!imagePath) return false;
+  
+  // Check if the image exists in the public folder
+  const publicPath = path.join(process.cwd(), 'public', imagePath.startsWith('/') ? imagePath.slice(1) : imagePath);
+  return fs.existsSync(publicPath);
+}
+
 function getBlogPosts(): BlogPost[] {
   const blogDir = path.join(process.cwd(), 'content/blog');
   const files = fs.readdirSync(blogDir);
@@ -35,13 +43,15 @@ function getBlogPosts(): BlogPost[] {
       
       const slug = file.replace('.mdx', '');
       
+      const imagePath = imageMatch ? imageMatch[1].trim().replace(/"/g, '') : undefined;
+      
       return {
         title: titleMatch ? titleMatch[1].trim() : 'Untitled',
         date: dateMatch ? dateMatch[1].trim() : new Date().toISOString(),
         description: descriptionMatch ? descriptionMatch[1].trim() : '',
         tags: tagsMatch ? tagsMatch[1].split(',').map(tag => tag.trim().replace(/"/g, '')) : [],
         slug,
-        image: imageMatch ? imageMatch[1].trim() : undefined,
+        image: imagePath && isValidImagePath(imagePath) ? imagePath : undefined,
       };
     })
     .filter((post): post is BlogPost => post !== null);

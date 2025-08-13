@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { notFound } from 'next/navigation';
-import { format } from 'date-fns';
 import Image from 'next/image';
 
 // Simple function to convert basic Markdown/MDX to HTML
 function markdownToHtml(content: string): string {
   return content
+    // Images
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="w-full h-auto rounded-lg shadow-lg border border-accent/10 mb-6" />')
+    
     // Headers
     .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold text-accent mb-4 mt-6">$1</h3>')
     .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold text-accent mb-4 mt-8">$1</h2>')
@@ -26,7 +28,7 @@ function markdownToHtml(content: string): string {
     .replace(/(<li.*<\/li>)/g, '<ul class="list-disc list-inside mb-4 space-y-2">$1</ul>')
     
     // Paragraphs
-    .replace(/^(?!<[h|u|p|d|s|li|pre])(.+)$/gim, '<p class="text-gray-300 mb-4 leading-relaxed">$1</p>')
+    .replace(/^(?!<[h|u|p|d|s|li|pre|img])(.+)$/gim, '<p class="text-gray-300 mb-4 leading-relaxed">$1</p>')
     
     // Remove extra empty paragraphs
     .replace(/<p class="text-gray-300 mb-4 leading-relaxed"><\/p>/g, '')
@@ -62,12 +64,16 @@ async function getPost(slug: string) {
   
   const content = fileContent.replace(/^---\n[\s\S]*?\n---/, '').trim();
   
+  // Validate image path
+  const imagePath = imageMatch ? imageMatch[1].trim().replace(/"/g, '') : undefined;
+  const isValidImage = imagePath && fs.existsSync(path.join(process.cwd(), 'public', imagePath.startsWith('/') ? imagePath.slice(1) : imagePath));
+  
   return {
     title: titleMatch ? titleMatch[1].trim() : 'Untitled',
     date: dateMatch ? dateMatch[1].trim() : new Date().toISOString(),
     description: descriptionMatch ? descriptionMatch[1].trim() : '',
     tags: tagsMatch ? tagsMatch[1].split(',').map(tag => tag.trim().replace(/"/g, '')) : [],
-    image: imageMatch ? imageMatch[1].trim() : undefined,
+    image: isValidImage ? imagePath : undefined,
     content,
     slug,
   };
@@ -117,11 +123,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {post.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
-              <time dateTime={post.date}>
-                {format(new Date(post.date), 'MMMM d, yyyy')}
-              </time>
-              {post.tags.length > 0 && <span className="hidden sm:inline">•</span>}
+            {post.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {post.tags.map((tag: string) => (
                   <a
@@ -133,13 +135,13 @@ export default async function PostPage({ params }: PostPageProps) {
                   </a>
                 ))}
               </div>
-            </div>
+            )}
           </header>
 
           {post.image && (
             <div className="relative w-full h-auto sm:h-[350px] md:h-[450px] mb-10 md:mb-12 rounded-lg overflow-hidden shadow-lg border border-accent/10">
               <Image
-                src={post.image}
+                src={post.image.startsWith('/') ? post.image : `/${post.image}`}
                 alt={post.title}
                 fill={true}
                 className="w-full h-full object-cover"

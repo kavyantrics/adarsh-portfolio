@@ -2,9 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { format } from 'date-fns';
-import { CalendarDays, Tag } from 'lucide-react';
-import Image from 'next/image';
+import { Tag } from 'lucide-react';
 
 interface BlogCardProps {
   title: string;
@@ -24,26 +22,7 @@ const BlogCard = ({ title, description, date, tags, slug, image }: BlogCardProps
       transition={{ duration: 0.4 }}
       className="group bg-[#27272a] border border-accent rounded-lg overflow-hidden shadow-neon flex flex-col h-full font-mono transition-all duration-300 hover:border-accent/70 hover:shadow-neon-md"
     >
-      {image && (
-        <div className="relative h-52 w-full overflow-hidden">
-          <Image
-            src={image}
-            alt={title}
-            fill={true}
-            className="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-300"></div>
-        </div>
-      )}
-      
       <div className="p-6 flex flex-col flex-grow">
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-          <CalendarDays size={14} />
-          <time dateTime={date}>
-            {format(new Date(date), 'MMMM d, yyyy')}
-          </time>
-        </div>
-        
         <Link href={`/blog/${slug}`} className="block mb-2">
           <h2 className="text-xl font-semibold text-gray-100 group-hover:text-accent transition-colors line-clamp-2">
             {title}

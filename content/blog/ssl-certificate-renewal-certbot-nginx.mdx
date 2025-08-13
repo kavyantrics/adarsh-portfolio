@@ -1,0 +1,125 @@
+---
+title: "Automating SSL Certificate Renewal with Certbot and Nginx"
+date: "2024-12-19"
+description: "A comprehensive guide to setting up automated SSL certificate renewal using Certbot and Nginx for secure HTTPS websites."
+tags: ["SSL", "HTTPS", "Certbot", "Nginx", "Let's Encrypt", "Security", "DevOps", "Automation"]
+image: "/sslcert.png"
+---
+
+# Automating SSL Certificate Renewal with Certbot and Nginx
+
+## Introduction
+
+Securing your website with HTTPS is essential for protecting user data and improving SEO rankings. Let's Encrypt offers free SSL/TLS certificates, and Certbot is a popular tool to obtain and automatically renew them. In this guide, we'll set up and automate SSL certificate renewal for your Nginx server.
+
+## Prerequisites
+
+Before starting, ensure you have:
+
+- A domain name pointed to your server's IP
+- Nginx installed and serving your website
+- `sudo` access to your server
+
+## Step 1: Install Certbot
+
+On Ubuntu/Debian:
+
+```bash
+sudo apt update
+sudo apt install certbot python3-certbot-nginx -y
+```
+
+## Step 2: Obtain an SSL Certificate
+
+```bash
+sudo certbot --nginx -d example.com -d www.example.com
+```
+
+Follow the prompts to select the domain and redirect all traffic to HTTPS.
+
+## Step 3: Test Auto-Renewal
+
+Certbot creates a cron job to handle renewals. Test it by running:
+
+```bash
+sudo certbot renew --dry-run
+```
+
+## Step 4: Verify Certificate Status
+
+Check your certificate information:
+
+```bash
+sudo certbot certificates
+```
+
+This will show you the expiration dates and domains covered by your certificates.
+
+## Step 5: Monitor Renewal Logs
+
+Keep an eye on the renewal process:
+
+```bash
+sudo tail -f /var/log/letsencrypt/letsencrypt.log
+```
+
+## Benefits
+
+- **Free SSL certificates** - No cost for basic security
+- **Automatic renewal** - No manual intervention required
+- **Improved SEO** - Search engines favor HTTPS sites
+- **Enhanced security** - Encrypted data transmission
+- **User trust** - Modern browsers show security indicators
+
+## Troubleshooting Common Issues
+
+### Certificate Renewal Fails
+
+If renewal fails, check:
+
+```bash
+sudo certbot renew --dry-run --verbose
+```
+
+### Nginx Configuration Issues
+
+Verify your Nginx configuration:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### Firewall Settings
+
+Ensure ports 80 and 443 are open:
+
+```bash
+sudo ufw status
+sudo ufw allow 80
+sudo ufw allow 443
+```
+
+## Advanced Configuration
+
+### Custom Renewal Hooks
+
+You can add custom scripts to run before and after renewal:
+
+```bash
+sudo certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
+```
+
+### Multiple Domains
+
+For multiple domains, add them all at once:
+
+```bash
+sudo certbot --nginx -d example.com -d www.example.com -d api.example.com
+```
+
+## Conclusion
+
+With Certbot and Nginx, you can set up HTTPS in minutes and ensure it's always up to date without manual intervention. The automated renewal process ensures your website remains secure and accessible to users.
+
+**Happy securing!** 🔒
