@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Globe, Monitor, Smartphone, Tablet, 
@@ -49,29 +49,9 @@ export default function AnalyticsDashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'devices' | 'traffic'>('overview');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Track this page view
-    trackPageView('/analytics');
-    
-    fetchAnalytics();
-    fetchRecentVisitors();
-    setIsVisible(true);
 
-    // Smart polling with error handling
-    const interval = setInterval(() => {
-      // Only poll if there are no current errors
-      if (!isLoading) {
-        fetchAnalytics();
-        fetchRecentVisitors();
-      } else {
-        // Silently skip refresh - previous request still in progress
-      }
-    }, 60000); // 60 seconds instead of 30 seconds
 
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchAnalytics = async (retryCount = 0) => {
+  const fetchAnalytics = useCallback(async (retryCount = 0) => {
     try {
       const url = `${window.location.origin}/api/analytics`;
       
@@ -101,9 +81,9 @@ export default function AnalyticsDashboard() {
         return;
       }
     }
-  };
+  }, []);
 
-  const fetchRecentVisitors = async (retryCount = 0) => {
+  const fetchRecentVisitors = useCallback(async (retryCount = 0) => {
     try {
       const url = `${window.location.origin}/api/analytics?type=recent&limit=20`;
       
@@ -133,13 +113,35 @@ export default function AnalyticsDashboard() {
         return;
       }
     }
-  };
+  }, []);
 
   const handleRefresh = async () => {
     setIsLoading(true);
     await Promise.all([fetchAnalytics(), fetchRecentVisitors()]);
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    // Track this page view
+    trackPageView('/analytics');
+    
+    fetchAnalytics();
+    fetchRecentVisitors();
+    setIsVisible(true);
+
+    // Smart polling with error handling
+    const interval = setInterval(() => {
+      // Only poll if there are no current errors
+      if (!isLoading) {
+        fetchAnalytics();
+        fetchRecentVisitors();
+      } else {
+        // Silently skip refresh - previous request still in progress
+      }
+    }, 60000); // 60 seconds instead of 30 seconds
+
+    return () => clearInterval(interval);
+  }, [isLoading, fetchAnalytics, fetchRecentVisitors]);
 
   const getBrowserIcon = (browser: string) => {
     switch (browser.toLowerCase()) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DeploymentStatus,
@@ -23,7 +23,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchData = async (retryCount = 0) => {
+  const fetchData = useCallback(async (retryCount = 0) => {
     try {
       // Try with absolute URL and more explicit options
       const url = `${window.location.origin}/api/dashboard`;
@@ -64,7 +64,7 @@ const Dashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const fetchDataXHR = () => {
     try {
@@ -82,7 +82,7 @@ const Dashboard = () => {
               const data = JSON.parse(xhr.responseText);
               setData(data);
               setError(null);
-            } catch (e) {
+            } catch {
               setError('Failed to parse XHR response');
             }
           } else {
@@ -115,7 +115,7 @@ const Dashboard = () => {
     }, 30000); // 30 seconds instead of 5 seconds
     
     return () => clearInterval(interval);
-  }, [error]); // Re-run effect if error changes
+  }, [error, fetchData]); // Re-run effect if error or fetchData changes
 
   const getStatusStyles = (status: string) => {
     switch (status.toLowerCase()) {
