@@ -216,15 +216,15 @@ const ArchitectureDiagram = () => {
 
   return (
     <section id="architecture" className="py-20 px-4 md:px-8 bg-[#18181b] font-mono">
-      <div className="container mx-auto max-w-6xl text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-6 text-accent">
-          System Architecture
+      <div className="container mx-auto max-w-7xl text-center mb-12">
+        <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-4 text-gray-100">
+          <span className="text-accent">System</span> Architecture
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto text-sm">
           An overview of the microservices architecture, demonstrating the flow of information and a scalable system design.
         </p>
       </div>
-      <div className="h-[600px] md:h-[700px] w-full bg-[#222225] rounded-xl border border-accent/50 shadow-neon-lg overflow-hidden mx-auto max-w-5xl">
+      <div className="h-[600px] md:h-[700px] w-full bg-[#222225] rounded-xl border border-accent/50 shadow-neon-lg overflow-hidden mx-auto max-w-7xl">
         <ReactFlow
           nodes={nodes}
           edges={edges}

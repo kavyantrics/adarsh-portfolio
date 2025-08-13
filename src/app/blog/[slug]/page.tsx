@@ -2,8 +2,36 @@ import fs from 'fs';
 import path from 'path';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
+
+// Simple function to convert basic Markdown/MDX to HTML
+function markdownToHtml(content: string): string {
+  return content
+    // Headers
+    .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold text-accent mb-4 mt-6">$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold text-accent mb-4 mt-8">$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-semibold text-accent mb-6 mt-8">$1</h1>')
+    
+    // Code blocks
+    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-[#222225] border border-gray-700 rounded-lg p-4 overflow-x-auto mb-4"><code class="text-sm">$2</code></pre>')
+    
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code class="bg-accent/10 text-accent px-2 py-1 rounded text-sm">$1</code>')
+    
+    // Bold
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-gray-200">$1</strong>')
+    
+    // Lists
+    .replace(/^\* (.*$)/gim, '<li class="text-gray-300 mb-2">$1</li>')
+    .replace(/(<li.*<\/li>)/g, '<ul class="list-disc list-inside mb-4 space-y-2">$1</ul>')
+    
+    // Paragraphs
+    .replace(/^(?!<[h|u|p|d|s|li|pre])(.+)$/gim, '<p class="text-gray-300 mb-4 leading-relaxed">$1</p>')
+    
+    // Remove extra empty paragraphs
+    .replace(/<p class="text-gray-300 mb-4 leading-relaxed"><\/p>/g, '')
+    .replace(/<p class="text-gray-300 mb-4 leading-relaxed">\s*<\/p>/g, '');
+}
 
 interface PostPageProps {
   params: {
@@ -12,46 +40,53 @@ interface PostPageProps {
 }
 
 async function getPost(slug: string) {
-  const postsDirectory = path.join(process.cwd(), 'content/blog');
-  const filePath = path.join(postsDirectory, `${slug}.mdx`);
+  const blogDir = path.join(process.cwd(), 'content/blog');
+  const filePath = path.join(blogDir, `${slug}.mdx`);
   
-  try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const [frontmatter, content] = fileContents.split('---').slice(1);
-    
-    const metadata = frontmatter.split('\n').reduce((acc, line) => {
-      const [key, ...value] = line.split(':');
-      if (key && value.length) {
-        acc[key.trim()] = value.join(':').trim();
-      }
-      return acc;
-    }, {} as Record<string, string>);
-    
-    return {
-      slug,
-      title: metadata.title,
-      date: metadata.date,
-      description: metadata.description,
-      tags: metadata.tags ? metadata.tags.split(',').map((tag: string) => tag.trim()) : [],
-      image: metadata.image,
-      content,
-    };
-  } catch {
+  if (!fs.existsSync(filePath)) {
     return null;
   }
+  
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+  
+  // Extract frontmatter
+  const frontmatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
+  if (!frontmatterMatch) return null;
+  
+  const frontmatter = frontmatterMatch[1];
+  const titleMatch = frontmatter.match(/title:\s*(.+)/);
+  const dateMatch = frontmatter.match(/date:\s*(.+)/);
+  const descriptionMatch = frontmatter.match(/description:\s*(.+)/);
+  const tagsMatch = frontmatter.match(/tags:\s*\[(.*?)\]/);
+  const imageMatch = frontmatter.match(/image:\s*(.+)/);
+  
+  const content = fileContent.replace(/^---\n[\s\S]*?\n---/, '').trim();
+  
+  return {
+    title: titleMatch ? titleMatch[1].trim() : 'Untitled',
+    date: dateMatch ? dateMatch[1].trim() : new Date().toISOString(),
+    description: descriptionMatch ? descriptionMatch[1].trim() : '',
+    tags: tagsMatch ? tagsMatch[1].split(',').map(tag => tag.trim().replace(/"/g, '')) : [],
+    image: imageMatch ? imageMatch[1].trim() : undefined,
+    content,
+    slug,
+  };
 }
 
 export async function generateStaticParams() {
-  const postsDirectory = path.join(process.cwd(), 'content/blog');
-  const filenames = fs.readdirSync(postsDirectory);
+  const blogDir = path.join(process.cwd(), 'content/blog');
+  const files = fs.readdirSync(blogDir);
   
-  return filenames.map((filename) => ({
-    slug: filename.replace(/\.mdx$/, ''),
-  }));
+  return files
+    .filter(file => file.endsWith('.mdx'))
+    .map(file => ({
+      slug: file.replace('.mdx', ''),
+    }));
 }
 
 export async function generateMetadata({ params }: PostPageProps) {
-  const post = await getPost(params.slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
   
   if (!post) {
     return {
@@ -66,7 +101,8 @@ export async function generateMetadata({ params }: PostPageProps) {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPost(params.slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
 
   if (!post) {
     notFound();
@@ -87,7 +123,7 @@ export default async function PostPage({ params }: PostPageProps) {
               </time>
               {post.tags.length > 0 && <span className="hidden sm:inline">•</span>}
               <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
+                {post.tags.map((tag: string) => (
                   <a
                     key={tag}
                     href={`/blog/tags/${tag}`}
@@ -119,10 +155,10 @@ export default async function PostPage({ params }: PostPageProps) {
                           prose-blockquote:border-accent prose-blockquote:bg-[#222225] prose-blockquote:text-gray-400 
                           prose-code:bg-accent/10 prose-code:text-accent prose-code:p-1 prose-code:rounded-md prose-code:text-sm 
                           prose-pre:bg-[#222225] prose-pre:border prose-pre:border-gray-700 prose-pre:rounded-lg prose-pre:shadow-sm">
-            <MDXRemote source={post.content} />
+            <div dangerouslySetInnerHTML={{ __html: markdownToHtml(post.content) }} />
           </div>
         </div>
       </article>
     </div>
   );
-} 
+}

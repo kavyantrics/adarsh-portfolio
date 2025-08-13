@@ -15,7 +15,7 @@ export default function QABot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hey there! 👋 I&apos;m Adarsh&apos;s personal AI sidekick. Ready to chat about tech, projects, or just shoot the breeze? What&apos;s on your mind?"
+      content: "Hey there! 👋 I'm Adarsh's personal AI sidekick. Ready to chat about tech, projects, or just shoot the breeze? What's on your mind?"
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);

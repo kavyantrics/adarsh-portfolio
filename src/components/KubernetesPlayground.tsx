@@ -181,7 +181,7 @@ const initialEdges: Edge[] = [
   { id: 'e3-4', source: 'deployment', target: 'pod1', markerEnd: { type: MarkerType.ArrowClosed, color: '#00ffae' }, style: { stroke: '#00ffae', strokeWidth: 1.5 } },
   { id: 'e3-5', source: 'deployment', target: 'pod2', markerEnd: { type: MarkerType.ArrowClosed, color: '#00ffae' }, style: { stroke: '#00ffae', strokeWidth: 1.5 } },
   { id: 'e3-6', source: 'deployment', target: 'pod3', markerEnd: { type: MarkerType.ArrowClosed, color: '#00ffae' }, style: { stroke: '#00ffae', strokeWidth: 1.5 } },
-  { id: 'e3-db', source: 'deployment', target: 'database', markerEnd: { type: MarkerType.ArrowClosed, color: '#00ffae' }, style: { stroke: '#00ffae', strokeWidth: 1.5, lineDash: [5,5] } },
+  { id: 'e3-db', source: 'deployment', target: 'database', markerEnd: { type: MarkerType.ArrowClosed, color: '#00ffae' }, style: { stroke: '#00ffae', strokeWidth: 1.5 } },
 ];
 
 const NodeIcon = ({ type }: { type: CustomNodeData['type'] }) => {
@@ -260,15 +260,15 @@ const proOptions = { hideAttribution: true };
 export default function KubernetesPlayground() {
   return (
     <section id="kubernetes-playground" className="py-20 px-4 md:px-8 bg-[#18181b] font-mono">
-      <div className="container mx-auto max-w-6xl text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-6 text-accent">
-          Kubernetes Playground
+      <div className="container mx-auto max-w-7xl text-center mb-12">
+        <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-4 text-gray-100">
+          <span className="text-accent">Kubernetes</span> Playground
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto text-sm">
           Explore this interactive Kubernetes cluster diagram. Click nodes to view YAML configurations and understand relationships between components.
         </p>
       </div>
-      <div className="h-[700px] w-full bg-[#222225] rounded-xl border border-accent/50 shadow-neon-lg overflow-hidden mx-auto max-w-5xl relative font-mono">
+      <div className="h-[700px] w-full bg-[#222225] rounded-xl border border-accent/50 shadow-neon-lg overflow-hidden mx-auto max-w-7xl relative font-mono">
         <ReactFlow
           nodes={initialNodes}
           edges={initialEdges}

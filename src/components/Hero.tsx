@@ -40,22 +40,37 @@ export default function Hero() {
             <p className="text-base sm:text-lg mb-10 text-gray-400 max-w-xl leading-relaxed">
               A seasoned Full Stack & DevOps Engineer with 3+ years, crafting high-performance software and resilient infrastructure. I&apos;ve reduced deployment times by <span className="text-accent font-semibold">60%</span>, achieved <span className="text-accent font-semibold">99.99%</span> system uptime, and spearheaded scalable feature rollouts for <span className="text-accent font-semibold">25,000+</span> users. My toolkit includes React.js, Node.js, Python, AWS, Docker, Kubernetes, and full CI/CD automation.
             </p>
-            <div className="flex flex-col sm:flex-row flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-start">
               <motion.a
                 href="#projects"
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                className="border-2 border-accent text-accent px-8 py-3 font-semibold uppercase tracking-wider rounded-md transition-all duration-300 hover:bg-accent hover:text-[#18181b] focus:outline-none focus:ring-4 focus:ring-accent/50 shadow-md hover:shadow-neon-sm"
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                className="border-2 border-accent text-accent px-10 py-4 font-bold uppercase tracking-wider rounded-lg transition-all duration-300 hover:bg-accent hover:text-gray-600 focus:outline-none focus:ring-4 focus:ring-accent/50 shadow-lg hover:shadow-neon-md hover:border-accent/80"
               >
                 View My Work
               </motion.a>
               <motion.a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                className="border-2 border-accent text-accent px-10 py-4 font-bold uppercase tracking-wider rounded-lg transition-all duration-300 hover:bg-accent hover:text-gray-600 focus:outline-none focus:ring-4 focus:ring-accent/50 shadow-lg hover:shadow-neon-md hover:border-accent/80"
+              >
+                Download Resume
+              </motion.a>
+            </div>
+            
+            {/* Secondary Action - Contact */}
+            <div className="mt-6">
+              <motion.a
                 href="#contact"
                 whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                className="border-2 border-accent text-accent px-8 py-3 font-semibold uppercase tracking-wider rounded-md transition-all duration-300 hover:bg-accent hover:text-[#18181b] focus:outline-none focus:ring-4 focus:ring-accent/50 shadow-md hover:shadow-neon-sm"
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 text-accent hover:text-accent/80 transition-colors font-medium text-sm border-b border-accent/30 hover:border-accent/60 pb-1"
               >
-                Contact Me
+                <span>Get in touch</span>
+                <span className="text-xs">→</span>
               </motion.a>
             </div>
           </motion.div>

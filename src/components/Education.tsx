@@ -9,22 +9,37 @@ interface EducationItem {
   degree: string;
   institution: string;
   date: string;
+  description?: string;
 }
 
 const EducationCard = ({ item }: { item: EducationItem }) => (
   <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    whileInView={{ opacity: 1, x: 0 }}
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    transition={{ duration: 0.5, delay: item.id * 0.15 }}
-    className="mb-6 p-5 bg-[#27272a] rounded-lg shadow-neon-md border border-accent/30 hover:shadow-neon-lg hover:border-accent/50 transition-all duration-300 font-mono"
+    transition={{ duration: 0.5, delay: item.id * 0.1 }}
+    className="p-4 bg-[#1f1f23] rounded-lg border border-gray-700/50 hover:border-accent/40 transition-all duration-300 hover:shadow-neon-sm group"
   >
-    <div className="flex items-start mb-2">
-      <GraduationCap className="w-6 h-6 mr-3 text-accent flex-shrink-0 mt-1" />
-      <div>
-        <h3 className="text-lg font-semibold text-gray-100">{item.degree}</h3>
-        <p className="text-sm text-gray-300">{item.institution}</p>
-        <p className="text-xs text-accent/80 mt-1">{item.date}</p>
+    <div className="flex items-start gap-3">
+      <div className="flex-shrink-0 w-8 h-8 bg-accent/10 rounded-md flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+        <GraduationCap className="w-4 h-4 text-accent" />
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <h3 className="text-base font-semibold text-gray-100 mb-1 group-hover:text-accent transition-colors duration-300">
+          {item.degree}
+        </h3>
+        <p className="text-sm font-medium text-accent mb-1">
+          {item.institution}
+        </p>
+        <p className="text-xs text-gray-500 bg-accent/5 px-2 py-1 rounded-md inline-block">
+          {item.date}
+        </p>
+        {item.description && (
+          <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+            {item.description}
+          </p>
+        )}
       </div>
     </div>
   </motion.div>
@@ -32,17 +47,27 @@ const EducationCard = ({ item }: { item: EducationItem }) => (
 
 export default function Education() {
   return (
-    <section id="education" className="bg-[#18181b] font-mono py-16 sm:py-20 md:py-24 px-4 md:px-8 lg:px-16">
-      <div className="container mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-12 md:mb-16 text-center uppercase tracking-wider">
-          <span className="text-accent">Education</span> <span className="text-gray-300">& Learning</span>
+    <div className="h-full font-mono">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="text-center mb-8"
+      >
+        <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-4 text-gray-100">
+          <span className="text-accent">Education</span> & Learning
         </h2>
-        <div className="max-w-2xl mx-auto">
-          {educationData.map((item) => (
-            <EducationCard key={item.id} item={item} />
-          ))}
-        </div>
+        <p className="text-sm text-gray-400 max-w-lg mx-auto">
+          My academic journey and continuous learning path in technology and engineering.
+        </p>
+      </motion.div>
+      
+      <div className="space-y-4">
+        {educationData.map((item) => (
+          <EducationCard key={item.id} item={item} />
+        ))}
       </div>
-    </section>
+    </div>
   );
 } 

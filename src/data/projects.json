@@ -4,9 +4,8 @@
     "title": "AI-Powered Web Vulnerability Scanner VulnerShield",
     "description": "Developed a DevSecOps tool that integrates OWASP ZAP with AI-based anomaly detection. Automates discovery of XSS, SQL Injection, and CSRF vulnerabilities across web apps and APIs. Generates real-time security reports with prioritized remediation steps.",
     "tags": ["Node.js", "Python", "Docker", "DevSecOps", "AI", "OWASP ZAP"],
-    "imageUrl": "/images/projects/vulnershield.png",
-    "demoUrl": "",
-    "githubUrl": "",
+    "imageUrl": "/projects/vulnershield.svg",
+    "githubUrl": "https://github.com/kavyantrics/Vulnerashield",
     "modelPath": ""
   },
   {
@@ -14,9 +13,8 @@
     "title": "Cost Optimization and Security Dashboard CloudGuard",
     "description": "Built a cloud monitoring tool that tracks AWS resource costs and security compliance metrics. Visualizes budget leaks and IAM misconfigurations with actionable insights. Integrated with AWS Cost Explorer, CloudWatch, and Security Hub APIs for live reporting.",
     "tags": ["Next.js", "Chart.js", "AWS", "CloudWatch", "Security Hub"],
-    "imageUrl": "/images/projects/cloudguard.png",
-    "demoUrl": "",
-    "githubUrl": "",
+    "imageUrl": "/projects/cloudguard.svg",
+    "githubUrl": "https://github.com/kavyantrics/TCAT-AI",
     "modelPath": ""
   },
   {
@@ -24,9 +22,8 @@
     "title": "Real-Time PDF Collaboration ByteDialogue",
     "description": "Engineered a scalable PDF review system using Next.js 13, Prisma, tRPC, Tailwind CSS. Enabled contextual discussions and comments by 100+ users with real-time sync over WebSockets.",
     "tags": ["Next.js", "Prisma", "tRPC", "Tailwind CSS", "WebSockets"],
-    "imageUrl": "/images/projects/bytedialogue.png",
-    "demoUrl": "",
-    "githubUrl": "",
+    "imageUrl": "/projects/bytedialogue.svg",
+    "githubUrl": "https://github.com/kavyantrics/bytedialogue",
     "modelPath": ""
   }
 ]

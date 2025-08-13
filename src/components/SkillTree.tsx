@@ -252,21 +252,20 @@ export default function SkillTree() {
   const categories = Array.from(new Set(skillNodes.map(node => node.category)));
 
   return (
-    <section id="skills" className="py-20 px-4 md:px-8 lg:px-16 bg-[#18181b] font-mono">
+    <section id="skills" className="py-16 px-4 md:px-8 lg:px-16 bg-[#18181b] font-mono">
       <div className="container mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-6 text-accent">
-            Skills & Expertise
+          <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-4 text-gray-100">
+            <span className="text-accent">Skills</span> & Expertise
           </h2>
-          <p className="text-gray-400 max-w-3xl mx-auto text-lg">
-            Comprehensive technical expertise across full-stack development, DevOps, and emerging technologies. 
-            Each skill represents years of hands-on experience building production applications.
+          <p className="text-gray-400 max-w-2xl mx-auto text-sm">
+            Comprehensive technical expertise across full-stack development, DevOps, and emerging technologies.
           </p>
         </motion.div>
 
@@ -275,7 +274,7 @@ export default function SkillTree() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
+          className="flex flex-wrap justify-center gap-3 mb-8"
         >
           <button
             onClick={() => setActiveCategory('all')}
@@ -487,7 +486,7 @@ export default function SkillTree() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 flex flex-wrap justify-center gap-6"
+          className="mt-8 flex flex-wrap justify-center gap-4"
         >
           {categories.map((category) => (
             <div key={category} className="flex items-center gap-2">
@@ -502,14 +501,14 @@ export default function SkillTree() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="mt-16 text-center"
+          className="mt-12 text-center"
         >
-          <div className="bg-[#27272a]/50 backdrop-blur-md border border-accent/30 rounded-xl p-8">
-            <h3 className="text-2xl font-bold text-accent mb-4">Skills Summary</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <div className="bg-[#27272a]/50 backdrop-blur-md border border-accent/30 rounded-xl p-6">
+            <h3 className="text-xl font-bold text-accent mb-4">Skills Summary</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
               <div>
-                <h4 className="text-lg font-semibold text-gray-200 mb-3">Core Strengths</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
+                <h4 className="text-base font-semibold text-gray-200 mb-2">Core Strengths</h4>
+                <ul className="space-y-1 text-sm text-gray-400">
                   <li>• Full-Stack Development (React, Node.js, Python)</li>
                   <li>• DevOps & Cloud Infrastructure (AWS, Docker, K8s)</li>
                   <li>• Database Design & Optimization</li>
@@ -517,8 +516,8 @@ export default function SkillTree() {
                 </ul>
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-gray-200 mb-3">Emerging Tech</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
+                <h4 className="text-base font-semibold text-gray-200 mb-2">Emerging Tech</h4>
+                <ul className="space-y-1 text-sm text-gray-400">
                   <li>• AI/ML Integration & Automation</li>
                   <li>• Performance Optimization</li>
                   <li>• Microservices Architecture</li>
@@ -526,8 +525,8 @@ export default function SkillTree() {
                 </ul>
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-gray-200 mb-3">Methodologies</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
+                <h4 className="text-base font-semibold text-gray-200 mb-2">Methodologies</h4>
+                <ul className="space-y-1 text-sm text-gray-400">
                   <li>• Agile Development & CI/CD</li>
                   <li>• Test-Driven Development</li>
                   <li>• Security-First Approach</li>

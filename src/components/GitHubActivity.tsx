@@ -71,15 +71,15 @@ const GitHubActivity = ({
 
   return (
     <section id="github-activity" className="py-20 px-4 md:px-8 bg-[#18181b] font-mono">
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto max-w-7xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-bold uppercase tracking-wider text-center mb-16 text-accent"
+          className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-center mb-12 text-gray-100"
         >
-          GitHub Activity
+          <span className="text-accent">GitHub</span> Activity
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">

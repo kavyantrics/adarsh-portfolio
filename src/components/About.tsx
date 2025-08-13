@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { DownloadCloud } from 'lucide-react';
+
 
 const skills = [
   { name: 'React', level: 90 },
@@ -108,14 +108,14 @@ export default function About() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-20 text-center"
         >
-          <a
-            href="/resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-[#18181b] rounded-full font-semibold transition-colors text-base shadow-neon-sm hover:shadow-neon-md"
+          <motion.a
+            href="#contact"
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center gap-2.5 px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-gray-600 rounded-full font-semibold transition-colors text-base shadow-neon-sm hover:shadow-neon-md"
           >
-            <DownloadCloud size={18} /> Download Resume
-          </a>
+            Let&apos;s Connect
+          </motion.a>
         </motion.div>
       </div>
     </section>

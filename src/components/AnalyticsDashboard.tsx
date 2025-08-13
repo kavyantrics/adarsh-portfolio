@@ -194,12 +194,12 @@ export default function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-6 text-accent">
-            Analytics Dashboard
+          <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-4 text-gray-100">
+            <span className="text-accent">Analytics</span> Dashboard
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-400 max-w-2xl mx-auto text-sm">
             Comprehensive insights into your portfolio visitors and their behavior
           </p>
         </motion.div>
