@@ -33,12 +33,26 @@ CREATE TABLE IF NOT EXISTS public.visitors (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create chat history table
+CREATE TABLE IF NOT EXISTS public.chat_history (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_ip TEXT NOT NULL,
+    conversation_id TEXT NOT NULL,
+    message_type TEXT CHECK (message_type IN ('user', 'assistant')) NOT NULL,
+    content TEXT NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    metadata JSONB DEFAULT '{}'::jsonb
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON public.analytics(created_at);
 CREATE INDEX IF NOT EXISTS idx_page_views_path ON public.page_views(path);
 CREATE INDEX IF NOT EXISTS idx_visitors_country ON public.visitors(country);
 CREATE INDEX IF NOT EXISTS idx_visitors_device ON public.visitors(device);
 CREATE INDEX IF NOT EXISTS idx_visitors_created_at ON public.visitors(created_at);
+CREATE INDEX IF NOT EXISTS idx_chat_history_user_ip ON public.chat_history(user_ip);
+CREATE INDEX IF NOT EXISTS idx_chat_history_conversation_id ON public.chat_history(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_chat_history_timestamp ON public.chat_history(timestamp);
 
 -- Insert default analytics record
 INSERT INTO public.analytics (
@@ -61,6 +75,7 @@ INSERT INTO public.analytics (
 ALTER TABLE public.analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_history ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for public read access (for analytics display)
 CREATE POLICY "Allow public read access to analytics" ON public.analytics
@@ -88,6 +103,16 @@ CREATE POLICY "Allow authenticated update to page views" ON public.page_views
 CREATE POLICY "Allow authenticated insert to visitors" ON public.visitors
     FOR INSERT WITH CHECK (true);
 
+-- Create policies for chat history
+CREATE POLICY "Allow public insert to chat history" ON public.chat_history
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow public read chat history by IP" ON public.chat_history
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow public update chat history by IP" ON public.chat_history
+    FOR UPDATE USING (true);
+
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -108,4 +133,5 @@ GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT ALL ON public.analytics TO anon, authenticated;
 GRANT ALL ON public.page_views TO anon, authenticated;
 GRANT ALL ON public.visitors TO anon, authenticated;
+GRANT ALL ON public.chat_history TO anon, authenticated;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;

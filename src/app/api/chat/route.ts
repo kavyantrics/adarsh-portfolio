@@ -1,5 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import OpenAI from 'openai';
+import { 
+  storeChatMessage, 
+  generateConversationId
+} from '@/lib/services';
 
 // Configure for static export
 export const dynamic = 'force-static';
@@ -34,7 +38,7 @@ Experience:
 
 Please provide accurate and helpful responses based on this information. If you're unsure about something, say so rather than making assumptions.`;
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const openai = getOpenAIClient();
     
@@ -45,7 +49,28 @@ export async function POST(req: Request) {
       );
     }
 
-    const { messages } = await req.json();
+    // Get user IP address
+    const forwarded = req.headers.get('x-forwarded-for');
+    const realIP = req.headers.get('x-real-ip');
+    const userIP = forwarded?.split(',')[0] || realIP || 'unknown';
+
+    const { messages, conversation_id: existingConversationId } = await req.json();
+
+    // Generate or use existing conversation ID
+    const conversation_id = existingConversationId || generateConversationId();
+
+    // Store user message
+    if (messages.length > 0) {
+      const lastUserMessage = messages[messages.length - 1];
+      if (lastUserMessage.role === 'user') {
+        await storeChatMessage(
+          userIP,
+          conversation_id,
+          'user',
+          lastUserMessage.content
+        );
+      }
+    }
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -57,9 +82,21 @@ export async function POST(req: Request) {
       max_tokens: 500,
     });
 
-    const message = completion.choices[0]?.message?.content || 'Sorry, I could not generate a response.';
+    const assistantMessage = completion.choices[0]?.message?.content || 'Sorry, I could not generate a response.';
 
-    return NextResponse.json({ message });
+    // Store assistant message
+    await storeChatMessage(
+      userIP,
+      conversation_id,
+      'assistant',
+      assistantMessage
+    );
+
+    return NextResponse.json({ 
+      message: assistantMessage,
+      conversation_id,
+      user_ip: userIP
+    });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAnalyticsSummary, getAnalyticsForPeriod } from '@/lib/supabaseAnalytics';
+import { getAnalyticsSummary, getAnalyticsForPeriod } from '@/lib/services';
 
 export async function GET(request: NextRequest) {
   try {

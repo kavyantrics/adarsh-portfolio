@@ -131,6 +131,35 @@ export interface Database {
           created_at?: string
         }
       }
+      chat_history: {
+        Row: {
+          id: string
+          user_ip: string
+          conversation_id: string
+          message_type: 'user' | 'assistant'
+          content: string
+          timestamp: string
+          metadata: Record<string, unknown>
+        }
+        Insert: {
+          id?: string
+          user_ip: string
+          conversation_id: string
+          message_type: 'user' | 'assistant'
+          content: string
+          timestamp?: string
+          metadata?: Record<string, unknown>
+        }
+        Update: {
+          id?: string
+          user_ip?: string
+          conversation_id?: string
+          message_type?: 'user' | 'assistant'
+          content?: string
+          timestamp?: string
+          metadata?: Record<string, unknown>
+        }
+      }
     }
   }
 }
@@ -139,3 +168,4 @@ export interface Database {
 export type AnalyticsRow = Database['public']['Tables']['analytics']['Row']
 export type PageViewRow = Database['public']['Tables']['page_views']['Row']
 export type VisitorRow = Database['public']['Tables']['visitors']['Row']
+export type ChatHistoryRow = Database['public']['Tables']['chat_history']['Row']
