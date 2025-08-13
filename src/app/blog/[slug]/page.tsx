@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 // Simple function to convert basic Markdown/MDX to HTML
 function markdownToHtml(content: string): string {
@@ -118,6 +120,17 @@ export default async function PostPage({ params }: PostPageProps) {
     <div className="min-h-screen bg-[#18181b] font-mono text-gray-300">
       <article className="container mx-auto px-4 py-16 sm:py-20 md:py-24">
         <div className="max-w-3xl mx-auto">
+          {/* Back Button */}
+          <div className="mb-8">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 px-4 py-2 text-accent hover:text-accent/80 transition-colors duration-200 font-medium text-sm border border-accent/20 hover:border-accent/40 rounded-lg hover:bg-accent/5"
+            >
+              <ArrowLeft size={16} />
+              Back to Blog
+            </Link>
+          </div>
+
           <header className="mb-10 md:mb-12">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-100 mb-4 leading-tight">
               {post.title}
